@@ -1,19 +1,3 @@
-https://stackoverflow.com/questions/45400284/understanding-init-subclass
-https://makina-corpus.com/blog/metier/2014/python-tutorial-understanding-python-mro-class-search-path
-https://stackoverflow.com/questions/45400284/understanding-init-subclass/45400561#45400561
-https://stackoverflow.com/questions/6760685/creating-a-singleton-in-python (metaclases)
-https://stackoverflow.com/questions/45536595/understanding-call-with-metaclasses (metaclases)
-https://blog.ionelmc.ro/2015/02/09/understanding-python-metaclasses/ (metaclases)
-https://www.toptal.com/python/python-class-attributes-an-overly-thorough-guide (atributos de clase y namespaces)
-
-
-https://www.toptal.com/python/why-are-there-so-many-pythons
-https://blog.paperspace.com/boosting-python-scripts-cython/
-https://blog.paperspace.com/getting-started-with-pypy/
-https://realpython.com/pypy-faster-python/
-
-
-
 # Definición funcional
 
 ## Idea inicial
@@ -48,12 +32,18 @@ El sistema está compuesto por los siguientes elementos lógicos:
     * Nombre largo.
 * <span style="text-decoration: underline">Etiquetas</span>: Cada etiqueta representa una categoría informativa (mundo, economía, tecnología, etc...). De las etiquetas se necesitará conocer:
     * Nombre largo.
-    * ¿Código único?.
+    * Descripción.
 * <span style="text-decoration: underline">Etiquetas de sitios RSS</span>: Relación de etiquetas para cada sitio RSS dado de alta. Sólo se deberá conocer la relación entre etiquetas y sitios RSS.
 * <span style="text-decoration: underline">Suscripciones de usuarios a sitios RSS</span>: Relación de sitios RSS a los que se suscribe un usuario dado. De esta relación se deberá almacenar:
     * Correspondencia entre usuarios y sitios RSS.
     * Fecha de suscripción.
     * Orden de suscripción para el usuario.
+* <span style="text-decoration: underline">Sesiones</span>: Cada vez que un usuario inicia sesión, se anotará para hacer seguimiento. De cada registro se tendrán en cuenta las siguientes características:
+    * Usuario.
+    * ID de sesión (generado automáticamente).
+    * Fecha de creación.
+    * Fecha de caducidad.
+    * Estado de la sesión (abierta, cerrada).
 * [<span style="text-decoration: underline">Perfiles</span>]: Perfiles disponibles. De cada perfil se deberá almacenar:
     * Nombre largo.
     * Código único.
@@ -72,6 +62,8 @@ El sistema está compuesto por los siguientes elementos lógicos:
 
 ### Casos de uso
 
+<span style="background-color:yellow;font-size:50px;">TODO</span>
+
 Listado detallado de todas las interacciones posibles entre el sistema y los actores, desglosadas en pasos.
 
 * Registro de usuario
@@ -85,7 +77,7 @@ Listado detallado de todas las interacciones posibles entre el sistema y los act
 
 ### Definición de base de datos.
 
-
+<span style="background-color:yellow;font-size:50px;">TODO</span>
 
 ## Iteraciones de software
 
@@ -95,7 +87,8 @@ A continuación se lista, por cada versión mayor, las funcionalidades, mejoras 
 
 * Aplicación básica funcional:
     * Alta.
-    * Login.
+    * Login. 
+    * Generación y mantenimiento de sesiones. Mecanismo para evitar que dos sesiones tengan el mismo ID (hash).
     * Gestión de datos de usuario: 
         * Datos personales. 
         * Intereses.
@@ -136,9 +129,4 @@ Se proponen las siguientes mejoras:
 
 * https://www.geeksforgeeks.org/designing-use-cases-for-a-project/
 * https://www.guru99.com/functional-requirement-specification-example.html
-
-
-
-
-
 
