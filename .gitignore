@@ -1,8 +1,8 @@
 # Pycharm
-app/.idea
+news_aggregator/.idea
 
 # Virtualenv
-app/venv
+news_aggregator/venv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
