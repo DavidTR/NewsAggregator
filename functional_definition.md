@@ -6,7 +6,7 @@ La aplicacion consistirá en un agregador de noticias de distintos sitios web. L
 
 Las actualizaciones de los feeds RSS se almacenarán en una base de datos, en la que se tendrá en cuenta la fecha y hora de la última actualización. Esto permitirá que se puedan recoger registros de la base de datos si otro usuario ha actualizado un feed RSS que comparte con otro, ahorrando llamadas a los sitios web y ahorrando recursos.
 
-### Actores
+## Actores
 
 Entidades que interactúan con el sistema desde fuera.
 
@@ -23,7 +23,7 @@ Entidades que interactúan con el sistema desde fuera.
     * Contraseña (encriptada).
     * [Perfil].
 
-### Sistema
+## Sistema
 
 El sistema está compuesto por los siguientes elementos lógicos:
 
@@ -60,182 +60,23 @@ El sistema está compuesto por los siguientes elementos lógicos:
 
 > NOTA: Los elementos entre corchetes se añadirán en futuras revisiones de la aplicación.
 
-### Casos de uso
-
-<span style="background-color:yellow;font-size:50px;">TODO</span>
-
-Listado detallado de todas las interacciones posibles entre el sistema y los actores, desglosadas en pasos.
-
-* <span style="text-decoration:underline">Registro de usuario</span>
-    * Actor principal: Usuario.
-    * Precondiciones:
-        * El correo electrónico del usuario no existe en el sistema.
-    * Disparadores:
-        * El usuario desea darse de alta en la aplicación. Para ello, consume el recurso de registro de usuarios.
-    * Escenarios OK:
-        1. Registro OK. 
-            * Pasos:
-                * El usuario indica los datos requeridos con un formato y tipo adecuados y llama al recurso de registro de usuario.
-                * El sistema recibe la llamada y hace las siguientes comprobaciones:
-                    1. Se comprueba que los datos son correctos en tipo y formato. La comprobación se hará en un orden determinado, elegido por el programador.
-                    2. Se comprueba que el correo electrónico no esté siendo utilizado por otro usuario.
-                * Los datos son correctos y el correo electrónico no existe en base de datos, se procede a crear un nuevo usuario con los datos indicados. 
-                    1. Se utilizan los datos proporcionados por el usuario para crear su registro en base de datos.
-                    2. Se crea una contraseña inicial aleatoriamente, se encripta y se guarda en base de datos.
-                    3. Se envía un correo electrónico al usuario con su clave inicial.
-                    4. Se devuelve una respuesta exitosa desde el recurso.
-            * Postcondiciones:
-                * Se crea un registro de usuario en la base de datos.
-                * Se genera una contraseña aleatoria y se almacena en el registro de base de datos recién creado.
-                * Se envía un correo electrónico al usuario informándole del alta exitosa y proporcionándole su contraseña.
-
-    * Escenarios KO:
-        1. Argumentos de tipo y/o formato incorrecto. 
-            * Pasos:
-                * El usuario llama al recurso de registro de usuario con uno o más datos erróneos.
-                * El sistema recibe la llamada y hace las siguientes comprobaciones:
-                    1. Se comprueba que los datos son correctos en tipo y formato. La comprobación se hará en un orden determinado, elegido por el programador.
-                * El sistema detecta que un parámetro tiene un tipo o formato incorrecto y emite una excepción dando información detallada y clara al usuario, abortando el proceso.
-            * Postcondiciones:
-                * No se crea registro del usuario ni se guarda información alguna en base de datos.
-        2. El correo electrónico ya existe en base de datos. 
-            * Pasos:
-                * El usuario indica los datos requeridos con un formato y tipo adecuados y llama al recurso de registro de usuario.
-                * El sistema recibe la llamada y hace las siguientes comprobaciones:
-                    1. Se comprueba que los datos son correctos en tipo y formato. La comprobación se hará en un orden determinado, elegido por el programador.
-                    2. Se comprueba que el correo electrónico no esté siendo utilizado por otro usuario.
-                * El sistema detecta que el correo electrónico indicado ya existe en base de datos y emite una excepción dando información detallada y clara al usuario, abortando el proceso.
-            * Postcondiciones:
-                * No se crea registro del usuario ni se guarda información alguna en base de datos.
-        3. Error no controlado en el sistema.
-            * Pasos:
-                * El usuario indica los datos requeridos con un formato y tipo adecuados y llama al recurso de registro de usuario.
-                * El sistema recibe la llamada y hace las siguientes comprobaciones:
-                    1. Se comprueba que los datos son correctos en tipo y formato. La comprobación se hará en un orden determinado, elegido por el programador.
-                    2. Se comprueba que el correo electrónico no esté siendo utilizado por otro usuario.
-                * El sistema experimenta un error no controlado en algún momento durante la ejecución del recurso y emite una excepción dando información detallada y clara al usuario, abortando el proceso. Se deberán cerrar conectores abiertos y liberar recursos.
-            * Postcondiciones:
-                * Dependiendo de dónde haya ocurrido el error se decidirá si aplicar ROLLBACK a la base de datos si es necesario. Por lo general, si no se ha modificado la base de datos, no se almacenará nada en ella.
-
-            * OJO: Si ocurriera un error al crear el usuario y la contraseña por ejemplo no se terminara de crear y almacenar, podría afectar a otros recursos y servicios. Tratar este tipo de cosas en consecuencia y asegurar que esto no pueda ocurrir por diseño.
-
-* <span style="text-decoration:underline">Identificación de usuario</span>
-    * Actor principal: Usuario.
-    * Precondiciones:
-        * El usuario está registrado en el sistema.
-        * El usuario está activo.
-    * Disparadores:
-        * El usuario desea identificarse para poder acceder a la aplicación. Para ello, consume el recurso de identificación de usuarios.
-    * Escenarios OK:
-        1. Identificación OK. 
-            * Pasos:
-                * El usuario indica los datos requeridos con un formato y tipo adecuados y llama al recurso de identificación de usuario.
-                * El sistema recibe la llamada y hace las siguientes comprobaciones:
-                    1. Se comprueba que los datos son correctos en tipo y formato. La comprobación se hará en un orden determinado, elegido por el programador.
-                    2. Se comprueba que el usuario exista y esté activo.
-                    3. Se comprueba si la contraseña proporcionada coincide con la almacenada en base de datos.
-                * Los datos son correctos y el correo electrónico no existe en base de datos, se procede a crear un nuevo usuario con los datos indicados. 
-                    1. Se utilizan los datos proporcionados por el usuario para crear su registro en base de datos.
-                    2. Se crea una contraseña inicial aleatoriamente, se encripta y se guarda en base de datos.
-                    3. Se envía un correo electrónico al usuario con su clave inicial.
-                    4. Se devuelve una respuesta exitosa desde el recurso.
-            * Postcondiciones:
-                * Se crea un registro de usuario en la base de datos.
-                * Se genera una contraseña aleatoria y se almacena en el registro de base de datos recién creado.
-                * Se envía un correo electrónico al usuario informándole del alta exitosa y proporcionándole su contraseña.
-
-    * Escenarios KO:
-        1. Argumentos de tipo y/o formato incorrecto. 
-            * Pasos:
-                * El usuario llama al recurso de identificación de usuario con uno o más datos erróneos.
-                * El sistema recibe la llamada y hace las siguientes comprobaciones:
-                    1. Se comprueba que los datos son correctos en tipo y formato. La comprobación se hará en un orden determinado, elegido por el programador.
-                * El sistema detecta que un parámetro tiene un tipo o formato incorrecto y emite una excepción dando información detallada y clara al usuario, abortando el proceso.
-            * Postcondiciones:
-                * No se crea registro del usuario ni se guarda información alguna en base de datos.
-
-
-### Definición de base de datos
-
-Definición de estructura de tablas de base de datos.
-
-> **users**
-
-Usuarios registrados en el sistema.
-
-| Nombre de campo |   Tipo        |        Restricciones        |
-|:---------------:|:-------------:|:---------------------------:|
-| id              | NUMERIC       | AUTO INCREMENT, PRIMARY KEY |
-| name            | STRING (50)   | UTF-8                       |
-| surname         | STRING (50)   | UTF-8                       |
-| email           | STRING (50)   | UTF-8, NOT NULL, UNIQUE     |
-| password        | STRING (100)  | UTF-8                       |
-| is_active       | BOOLEAN       |                             |
-
-> **rss_feeds**
-
-Sitios que exponen feeds RSS.
-
-| Nombre de campo |   Tipo        |        Restricciones        |
-|:---------------:|:-------------:|:---------------------------:|
-| id              | NUMERIC       | AUTO INCREMENT, PRIMARY KEY |
-| url             | STRING (50)   | UTF-8, UNIQUE               |
-| title           | STRING (100)  | UTF-8                       |
-
-
-> **tags**
-
-Etiquetas que permiten clasificar los sitios RSS e identificar intereses de usuarios.
-
-| Nombre de campo |   Tipo        |        Restricciones        |
-|:---------------:|:-------------:|:---------------------------:|
-| id              | NUMERIC       | AUTO INCREMENT, PRIMARY KEY |
-| title           | STRING (50)   | UTF-8, NOT NULL             |
-| description     | STRING (200)  | UTF-8                       |
-
-> **rss_feeds_tags**
-
-Correspondencia entre sitios RSS y etiquetas. Cada sitio RSS puede tener varias etiquetas distintas, dando una idea a los usuarios sobre el tipo de contenido que publica.
-
-| Nombre de campo |   Tipo        |        Restricciones                |
-|:---------------:|:-------------:|:-----------------------------------:|
-| rss_feed_id     | NUMERIC       | PRIMARY KEY, FOREIGN KEY (rss_feed) |
-| tag_id          | NUMERIC       | PRIMARY KEY, FOREIGN KEY (tags)     |
-
-> **users_rss_feeds**
-
-Suscripciones de usuarios a sitios RSS.
-
-| Nombre de campo |   Tipo        |        Restricciones                |
-|:---------------:|:-------------:|:-----------------------------------:|
-| user_id         | NUMERIC       | PRIMARY KEY, FOREIGN KEY (users)    |
-| rss_feed_id     | NUMERIC       | PRIMARY KEY, FOREIGN KEY (rss_feed) |
-
-> **sessions**
-
-Registros de todas las sesiones creadas en el sistema por logins de usuarios.
-
-| Nombre de campo |   Tipo             |        Restricciones                 |
-|:---------------:|:------------------:|:------------------------------------:|
-| id              | NUMERIC            | AUTO INCREMENT, PRIMARY KEY          |
-| user_id         | NUMERIC            | FOREIGN KEY (users), NOT NULL        |
-| session_id      | STRING (100)       | UTF-8, NOT NULL, UNIQUE              |
-| creation_date   | DATETIME (UTC + 2) | NOT NULL, DEFAULT NOW (UTC + 2)      |
-| expiration_date | DATETIME (UTC + 2) | NOT NULL                             |
-| closing_date    | DATETIME (UTC + 2) |                                      |
-| is_alive        | BOOLEAN            |                                      |
-
 ## Software elegido
 
 1. Intérprete: CPython (clásico).
 2. ORM: SQLAlchemy.
-3. Base de datos: 
-4. Servidor web: 
+3. Base de datos: MySQL.
+4. DBAPI: PyODBC
+5. Servidor web de aplicación: FastAPI + GEvent.
+6. Servidor web externo: Nginx.
 
 
-## Iteraciones de software
+## Planificación de versionado
 
 A continuación se lista, por cada versión mayor, las funcionalidades, mejoras o ideas que incorporarán.
+
+### Formato de etiquetas en GIT
+
+Para este proyecto se usarán 
 
 ### Versión 0.1
 
@@ -252,6 +93,8 @@ A continuación se lista, por cada versión mayor, las funcionalidades, mejoras 
         * Ordenar.
         * Eliminar suscripción.
     * Actualizar suscripciones RSS de un usuario (volver a pedir noticias vía internet).
+* Tests unitarios.
+* Etiquetado de tipos (type hinting).
 * Sistema de logging a fichero con rotación diaria.
 * Organización de archivos según DDD.
 * API REST con nombres adecuados en recursos.
@@ -259,6 +102,9 @@ A continuación se lista, por cada versión mayor, las funcionalidades, mejoras 
 * Aplicar principios SOLID y fail fast.
 * Aplicar concurrencia en el servidor web y gestionar las llamadas externas con paralelismo.
 * ¿Cómo tratar errores inesperados?, ¿Rollback?
+* Inyección de dependencias.
+* Tests de estrés.
+* Tags GIT
 
 ### Versión 1.0
 
@@ -283,4 +129,4 @@ Se proponen las siguientes mejoras:
 
 * https://www.geeksforgeeks.org/designing-use-cases-for-a-project/
 * https://www.guru99.com/functional-requirement-specification-example.html
-
+* https://www.sitepoint.com/organize-project-files/
