@@ -94,6 +94,7 @@ Para este proyecto se usarán
         * Eliminar suscripción.
     * Actualizar suscripciones RSS de un usuario (volver a pedir noticias vía internet).
 * Tests unitarios.
+* Gestor de configuración para proteger contraseñas y organizar archivos -> Dynaconf.
 * Etiquetado de tipos (type hinting).
 * Sistema de logging a fichero con rotación diaria.
 * Organización de archivos según DDD.
@@ -104,7 +105,7 @@ Para este proyecto se usarán
 * ¿Cómo tratar errores inesperados?, ¿Rollback?
 * Inyección de dependencias.
 * Tests de estrés.
-* Tags GIT
+* Tags GIT.
 
 ### Versión 1.0
 

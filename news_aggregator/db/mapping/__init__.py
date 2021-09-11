@@ -8,8 +8,4 @@ Each file will keep a certain number of classes that will be related mainly to t
 For example, in the "users" file, mapping classes for tables such as "users", "sessions" or "users_rss_feeds" cam be
 found, all of them having in common that the users are the part with the most importance in their purpose.
 
-                                                    - Activity log -
-========================================================================================================================
-2021/09/11 - David Téllez Rodríguez - Creation
-
 """

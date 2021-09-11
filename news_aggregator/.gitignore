@@ -1,0 +1,7 @@
+# Configuration files
+cfg/.secrets.toml
+cfg/settings.toml
+
+# Pycharm
+.idea
+

@@ -2,6 +2,6 @@
 """
                                                   - File description -
 ------------------------------------------------------------------------------------------------------------------------
-All business logic and services files will be in this module.
+Configuration file for all the application. Connection strings and app tuning settings.
 
 """

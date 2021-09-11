@@ -1,0 +1,7 @@
+# Database connection
+[[database_connection]]
+connection_string = ""
+
+# Stored in your cfg/.secrets.toml file
+username = ""
+password = ""

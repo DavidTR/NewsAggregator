@@ -1,9 +1,3 @@
-# Pycharm
-news_aggregator/.idea
-
-# Virtualenv
-news_aggregator/venv
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
