@@ -12,7 +12,7 @@ CREATE DATABASE NewsAggregator;
 -- Use the database in order to create the following tables in it.
 USE NewsAggregator;
 
--- Create all the databases.
+-- Database tables.
 -- users table
 CREATE TABLE users (
     id INT AUTO_INCREMENT,
@@ -34,11 +34,11 @@ CREATE TABLE rss_feeds (
     UNIQUE KEY(url)
 ) COMMENT = 'Sites that expose their news using RSS';
 
--- rss_feeds_news
+-- rss_feeds_news table
 CREATE TABLE rss_feeds_news (
     id INT AUTO_INCREMENT,
     rss_feed_id INT NOT NULL,
-    query_data DATETIME,
+    query_date DATETIME,
     news_data JSON,
     PRIMARY KEY(id),
     CONSTRAINT rss_feeds_news_rss_feeds_id_fk FOREIGN KEY(rss_feed_id) REFERENCES rss_feeds(id) ON DELETE CASCADE
@@ -85,4 +85,4 @@ CREATE TABLE sessions (
     CONSTRAINT sessions_users_id_fk FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE KEY(session_id),
     INDEX(user_id)
-) COMMENT = 'All the sessions that users create when they log-in are stored here';
+) COMMENT = 'All the sessions that users create when they log-in will be stored here';

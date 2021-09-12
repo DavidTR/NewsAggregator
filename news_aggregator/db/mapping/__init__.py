@@ -9,3 +9,8 @@ For example, in the "users" file, mapping classes for tables such as "users", "s
 found, all of them having in common that the users are the part with the most importance in their purpose.
 
 """
+from sqlalchemy.orm import declarative_base
+
+# This class will be used in all the mapping classes as their parent class. It will be declared only once, and imported
+# from this file.
+MappingBaseClass = declarative_base()

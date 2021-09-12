@@ -106,7 +106,7 @@ Para este proyecto se usarán
 * Inyección de dependencias.
 * Tests de estrés.
 * Tags GIT.
-* Zen of Python.
+* Zen of Python (PEP 20) y Guía de estilos para código Python (PEP 8).
 
 ### Versión 1.0
 
