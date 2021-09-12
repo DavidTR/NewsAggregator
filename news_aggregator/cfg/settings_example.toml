@@ -1,7 +1,22 @@
+# ======================================================================================================================
+#                                       WARNING: DO NOT CHANGE THIS FILE!
+# ======================================================================================================================
+# These configuration values are not used in the application. Use the files cfg/settings.toml and cfg/.secrets.toml
+# (both .gitignored by default) to set the appropriate configuration settings.
+# Use this content as a template and fill the blanks in the configuration values to create a valid cfg/settings.toml
+# file for the application to use.
+# Check cfg/.secrets_example.toml as well to create your own cfg/.secrets.toml file.
+
 # Database connection
 [[database_connection]]
-connection_string = ""
 
-# Stored in your cfg/.secrets.toml file
-username = ""
-password = ""
+# Unicode ODBC driver must be used to store Unicode characters in the database.
+# For example: MySQL ODBC 8.0 Unicode Driver
+driver = ""
+
+# Connection chain values.
+server = ""
+database = ""
+charset = ""
+
+

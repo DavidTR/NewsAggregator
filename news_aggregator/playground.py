@@ -1,6 +1,7 @@
 # -*- encoding:utf-8 -*-
 import feedparser
 import pyodbc
+from cfg import config
 
 """
                                                   - File description -
@@ -19,13 +20,15 @@ def feedparser_test() -> None:
 
 
 def mysql_connection() -> None:
+
+    database_connection_settings = config.settings.DATABASE_CONNECTION
     connection_string = (
-        r'DRIVER=MySQL ODBC 8.0 ANSI Driver;'
-        r'SERVER=localhost;'
-        r'DATABASE=NewsAggregator;'
-        r'UID=news_aggregator;'
-        r'PWD=news_aggregator;'
-        r'charset=utf8mb4;'
+        f'DRIVER={database_connection_settings["driver"]};'
+        f'SERVER={database_connection_settings["server"]};'
+        f'DATABASE={database_connection_settings["database"]};'
+        f'UID={database_connection_settings["uid"]};'
+        f'PWD={database_connection_settings["pwd"]};'
+        f'charset={database_connection_settings["charset"]};'
     )
     # print(pyodbc.drivers())
     connection = pyodbc.connect(connection_string)

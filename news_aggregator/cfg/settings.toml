@@ -1,0 +1,18 @@
+dynaconf_merge = true
+# ======================================================================================================================
+#                                                  BASIC CONFIGURATION
+# ======================================================================================================================
+# These configuration values are set to match my local environment an personal tuning. In the future this file may
+# be .gitignored.
+
+# Database connection
+[database_connection]
+
+# Unicode driver must be used to store Unicode characters in the database. For example: MySQL ODBC 8.0 Unicode Driver
+driver = "MySQL ODBC 8.0 Unicode Driver"
+
+# Connection chain values.
+server = "localhost"
+database = "NewsAggregator"
+charset = "utf8mb4"
+

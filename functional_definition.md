@@ -106,6 +106,7 @@ Para este proyecto se usarán
 * Inyección de dependencias.
 * Tests de estrés.
 * Tags GIT.
+* Zen of Python.
 
 ### Versión 1.0
 
