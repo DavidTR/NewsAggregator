@@ -8,11 +8,14 @@ dynaconf_merge = true
 # Database connection
 [database_connection]
 
-# Unicode driver must be used to store Unicode characters in the database. For example: MySQL ODBC 8.0 Unicode Driver
+# Only for ODBC connections.
+# Unicode driver must be used to store Unicode characters in the database. For example: MySQL ODBC 8.0 Unicode Driver.
 driver = "MySQL ODBC 8.0 Unicode Driver"
 
 # Connection chain values.
 server = "localhost"
 database = "NewsAggregator"
+
+# Only for ODBC connections.
 charset = "utf8mb4"
 
