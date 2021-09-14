@@ -100,7 +100,6 @@ Para este proyecto se usarán
 * Organización de archivos según DDD.
 * API REST con nombres adecuados en recursos.
 * Comprobación de datos de entrada.
-* Aplicar principios SOLID y fail fast.
 * Aplicar concurrencia en el servidor web y gestionar las llamadas externas con paralelismo.
 * ¿Cómo tratar errores inesperados?, ¿Rollback?
 * Inyección de dependencias.
@@ -126,6 +125,7 @@ Se proponen las siguientes mejoras:
 * Soportar conectores a los sistemas gestores de bases de datos más populares: PostgreSQL, MySQL, Oracle, etc...
 * Dockerizar aplicación y orquestarla con Kubernetes.
 * Sistema de privilegios, perfiles y acciones.
+* Aplicar principios SOLID. Se comenzó el curso de Udemy pero el modificar mi forma de programar para incorporar estos principios llevará tiempo que no tengo para la versión 0.1.
 
 # Referencias
 

@@ -32,5 +32,17 @@ def create_database_engine():
                          f'/{database_connection_settings["database"]}')
 
 
-# Construct Session instances with the sessionmaker factory and
+"""
+Construct Session instances with the sessionmaker factory and ensure that there will not be any data corruption
+with scoped_session. scoped_session implements the registry pattern and, along with thread local storage, makes
+that every thread that requests it can have an unique Session object, held in the thread's local storage, providing
+thread safety to ORM sessions.
+See: https://docs.sqlalchemy.org/en/14/orm/contextual.html?highlight=scoped_session#thread-local-scope
+
+As it will be implemented in this application -for safety and inconsistency prevention reasons- the sessions and
+transactions must be created and opened, respectively, for each web request. When finished processing the request,
+the transaction will be closed (committed or rolled back) and the session will be closed (in this case, removed).
+See: https://docs.sqlalchemy.org/en/14/orm/contextual.html?highlight=scoped_session#using-thread-local-scope-with-web
+-applications
+"""
 Session = scoped_session(sessionmaker(bind=create_database_engine()))

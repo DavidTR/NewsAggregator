@@ -1,9 +1,11 @@
-dynaconf_merge = true
 # ======================================================================================================================
-#                                                  BASIC CONFIGURATION
+#                                                   APP CONFIGURATION
 # ======================================================================================================================
 # These configuration values are set to match my local environment an personal tuning. In the future this file may
 # be .gitignored.
+
+# Needed to avoid the rewriting of these settings after parsing .secrets.toml
+dynaconf_merge = true
 
 # Database connection
 [database_connection]
