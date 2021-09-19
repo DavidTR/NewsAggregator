@@ -2,5 +2,5 @@
 """
                                                   - File description -
 ------------------------------------------------------------------------------------------------------------------------
-The API will be implemented in these files.
+File for metaprogramming assets (decorators, metaclasses and such).
 """

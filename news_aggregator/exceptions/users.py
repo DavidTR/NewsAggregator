@@ -2,10 +2,10 @@
 """
                                                   - File description -
 ------------------------------------------------------------------------------------------------------------------------
-Sign in service class.
-
+Exceptions related to users logic.
 """
+from exceptions.base import AppException
 
 
-class LogIn:
-    pass
+class UserDataNotFound(AppException):
+    exception_code = "U001"

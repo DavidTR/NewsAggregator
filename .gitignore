@@ -129,5 +129,7 @@ dmypy.json
 .pyre/
 
 # Pycharm project settings
-.idea/
+news_aggregator/.idea/*
 
+# Configuration secrets
+news_aggregator/cfg/.secrets.toml

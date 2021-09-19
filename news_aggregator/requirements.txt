@@ -1,13 +1,4 @@
-dynaconf==3.1.7
-fastapi==0.68.1
-feedparser==6.0.8
-gevent==21.8.0
-greenlet==1.1.1
-pydantic==1.8.2
-pyodbc==4.0.32
-sgmllib3k==1.0.0
-SQLAlchemy==1.4.23
-starlette==0.14.2
-typing-extensions==3.10.0.2
-zope.event==4.5.0
-zope.interface==5.4.0
+dynaconf~=3.1.7
+feedparser~=6.0.8
+pyodbc~=4.0.32
+pytz~=2021.1

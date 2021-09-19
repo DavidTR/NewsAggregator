@@ -269,3 +269,24 @@ else:
 
 ```
 
+## Referencia a URLs del panel de administración Django.
+
+Si se requiere hacer referencia mediante el tag {% url ... %} en algún template, Django dispone de patrones específicos para el panel de administración: https://docs.djangoproject.com/en/dev/ref/contrib/admin/#reversing-admin-urls
+
+También en esta categoría caen URLs como la de login: https://docs.djangoproject.com/en/3.2/topics/auth/default/#the-login-required-decorator, a la que Django redirige si un usuario no está identificado e intenta acceder a una URL cuya view está protegida por el decorador `login_required`. 
+
+## Cómo Django trata las contraseñas (básico)
+
+Django incorpora varias formas de computar y tratar las contraseñas (https://docs.djangoproject.com/en/3.2/topics/auth/passwords/). Según señalan en su documentación, el sistema de identificado de usuarios no debería reinventarse frecuentemente, pues bastará con usar una implementación que se compruebe es segura y robusta.
+
+En el caso de Django, se usan contraseñas almacenadas como hashes. Estas cadenas se componen de la siguiente manera:
+
+`<algorithm>$<iterations>$<salt>$<hash>`
+
+Donde:
+* `<algorithm>`: Algoritmo seleccionado para calcular el hash. Es uno de los que soporta Django y que se pueden encontrar en `settings.PASSWORD_HASHERS`, en el archivo `global_settings.py` (no se encuentra en el proyecto). Por defecto el algoritmo empleado es PBKDF2, que cuenta con hashes SHA256.
+* `<iterations>`: Número de iteraciones del algoritmo (cuantas más mejor, aunque más coste computacional se asocia a la computación de cada contraseña).
+* `<salt>`: Cadena aleatoria, para evitar ataques Rainbow table (https://en.wikipedia.org/wiki/Rainbow_table).
+* `<hash>`: Resultado de la función de hashing.
+
+Django ofrece la posibilidad de cambiar el algoritmo y modificar algunos parámetros, aunque no es recomendable si no es completamente necesario.

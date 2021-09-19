@@ -6,6 +6,7 @@
 """
 from db.connection import Session
 from db.mapping.users import Users
+from exceptions.users import UserDataNotFound
 
 
 class UserData:
@@ -20,7 +21,7 @@ class UserData:
         try:
             user_data = session.query(Users).filter_by(id=user.id)
         except:
-            session.rollback()
+            raise UserDataNotFound()
         finally:
             session.close()
 
