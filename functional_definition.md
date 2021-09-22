@@ -65,67 +65,9 @@ El sistema está compuesto por los siguientes elementos lógicos:
 1. Intérprete: CPython (clásico).
 2. ORM: SQLAlchemy.
 3. Base de datos: MySQL.
-4. DBAPI: PyODBC
-5. Servidor web de aplicación: FastAPI + GEvent.
-6. Servidor web externo: Nginx.
-
-
-## Planificación de versionado
-
-A continuación se lista, por cada versión mayor, las funcionalidades, mejoras o ideas que incorporarán.
-
-### Formato de etiquetas en GIT
-
-Para este proyecto se usarán 
-
-### Versión 0.1
-
-* Aplicación básica funcional:
-    * Alta.
-    * Login. 
-    * Generación y mantenimiento de sesiones. Mecanismo para evitar que dos sesiones tengan el mismo ID (hash).
-    * Gestión de datos de usuario: 
-        * Datos personales. 
-        * Intereses.
-    * Baja de cuenta de usuario (lógica).
-    * Modificación de suscripciones RSS de usuarios.
-        * Suscribirse a un nuevo sitio RSS.
-        * Ordenar.
-        * Eliminar suscripción.
-    * Actualizar suscripciones RSS de un usuario (volver a pedir noticias vía internet).
-* Tests unitarios.
-* Gestor de configuración para proteger contraseñas y organizar archivos -> Dynaconf.
-* Etiquetado de tipos (type hinting).
-* Sistema de logging a fichero con rotación diaria.
-* Organización de archivos según DDD.
-* API REST con nombres adecuados en recursos.
-* Comprobación de datos de entrada.
-* Aplicar concurrencia en el servidor web y gestionar las llamadas externas con paralelismo.
-* ¿Cómo tratar errores inesperados?, ¿Rollback?
-* Inyección de dependencias.
-* Tests de estrés.
-* Tags GIT.
-* Zen of Python (PEP 20) y Guía de estilos para código Python (PEP 8).
-
-### Versión 1.0
-
-Se proponen las siguientes mejoras:
-
-* Anotar todos los eventos del sistema en una nueva tabla de base de datos ("eventos"). Deberá evaluarse si puede hacerse con muy poco impacto al sistema y a la base de datos, anotando la información mínima indispensable. Se recomienda incluir el código como decorador o metaclase. 
-* Verificación de correo electrónico en alta de cuenta. Agregar soporte para reconocer usuarios activos o inactivos y usuarios con email verificado o no verificado. El proceso de alta se modificará para que fije al usuario como inactivo y con email no verificado (enviando un email para que active la cuenta a su vez), lo cual le impedirá hacer login hasta que lo verifique. Se deberá crear otra sección para reenviar el correo electrónico de activación desde el servicio de login. Estos correos deben tener un tiempo de expiración y su envío deberá anotarse en la base de datos, con fecha, usuario y resultado (tabla eventos).
-
-### Sucesivas versiones (por planificar)
-
-* Agregar una clasificación para cada feed RSS por popularidad (investigar si esta información existe). También se pueden usar otros criterios, como: 
-    * Rapidez a la hora de publicar noticias.
-    * Número medio de noticias publicadas por día.
-    * Independencia ideológica/libertad del medio de comunicación.
-* Soporte a APML, tanto para importar preferencias de usuario como para exportarlas.
-* Sugerir al usuario qué feeds podrían interesarles, ordenados por los criterios listados en el punto 1 de esta lista. El usuario podrá ir eligiendo uno a uno. Esto debería ser una nueva sección de la aplicación, evitando ser invasiva.
-* Soportar conectores a los sistemas gestores de bases de datos más populares: PostgreSQL, MySQL, Oracle, etc...
-* Dockerizar aplicación y orquestarla con Kubernetes.
-* Sistema de privilegios, perfiles y acciones.
-* Aplicar principios SOLID. Se comenzó el curso de Udemy pero el modificar mi forma de programar para incorporar estos principios llevará tiempo que no tengo para la versión 0.1.
+4. Servidor web de aplicación: Tornado.
+5. Servidor web externo: Nginx.
+6. Control de procesos: Supervisor.
 
 # Referencias
 

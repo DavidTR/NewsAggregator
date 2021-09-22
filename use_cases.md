@@ -2,7 +2,7 @@
 
 <span style="background-color:yellow;font-size:50px;">TODO</span>
 
-Listado detallado de todas las interacciones posibles entre el sistema y los actores, desglosadas en pasos.
+Listado detallado de todas las interacciones posibles entre el sistema y los actores, desglosadas en pasos. Este listado se usará para implementar los servicios necesarios en el sistema.
 
 ## Registro de usuario
 

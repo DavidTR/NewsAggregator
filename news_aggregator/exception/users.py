@@ -4,8 +4,10 @@
 ------------------------------------------------------------------------------------------------------------------------
 Exceptions related to users logic.
 """
-from exceptions.base import AppException
+from exception.base import BaseAppException
 
 
-class UserDataNotFound(AppException):
+class UserNotFound(BaseAppException):
     exception_code = "U001"
+
+    _default_error_message = "No user data found with the provided credentials"

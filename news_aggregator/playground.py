@@ -6,6 +6,7 @@ import pyodbc
 import pytz
 
 from cfg import config
+from exception.base import BaseAppException
 
 """
                                                   - File description -
@@ -64,6 +65,14 @@ def timezones() -> None:
     # These lines already consider DST, which can be checked by calling the "dst()" method. This method outputs the
     # number of ours (positive or negative) with respect to UTC applied to the date object as DST.
     print(f"Madrid local time DST: {madrid_local_time.dst()}")
+
+
+class C1(BaseAppException):
+    pass
+
+
+class C2(BaseAppException):
+    pass
 
 
 if __name__ == '__main__':
