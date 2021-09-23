@@ -1,9 +1,11 @@
 # -*- encoding:utf-8 -*-
 import datetime
+import string
 
 import feedparser
 import pyodbc
 import pytz
+from string import ascii_uppercase
 
 from cfg import config
 from exception.base import BaseAppException
@@ -67,15 +69,20 @@ def timezones() -> None:
     print(f"Madrid local time DST: {madrid_local_time.dst()}")
 
 
-class C1(BaseAppException):
-    pass
+def string_validations(test_string: str, b=None) -> None:
+    """String validation logic"""
+    print(any(map(str.isupper, test_string)))
 
+    if not isinstance(test_string, str) and ascii_uppercase:
+        print("No capital letter in test_string")
 
-class C2(BaseAppException):
-    pass
+    special = string.punctuation
+
+    sum([character in test_string for character in list(special)])
 
 
 if __name__ == '__main__':
     # feedparser_test()
     # mysql_connection()
-    timezones()
+    # timezones()
+    string_validations("A2BF/?!;:cdefgh")

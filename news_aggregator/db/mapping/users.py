@@ -28,11 +28,10 @@ class Subscriptions(MappingBaseClass):
     """Users subscribed to RSS feeds"""
     __tablename__ = "subscriptions"
 
-    user_id = Column(Integer)
-    rss_feed_id = Column(Integer)
-    PrimaryKeyConstraint(("user_id", "rss_feed_id"))
-    ForeignKeyConstraint(("user_id",), "users.id", name="subscriptions_users_id_fk", ondelete="CASCADE")
-    ForeignKeyConstraint(("rss_feed_id",), "rss_feeds.id", name="subscriptions_rss_feeds_id_fk", ondelete="CASCADE")
+    user_id = Column(Integer, primary_key=True)
+    rss_feed_id = Column(Integer, primary_key=True)
+    ForeignKeyConstraint(("user_id",), ("users.id",), name="subscriptions_users_id_fk", ondelete="CASCADE")
+    ForeignKeyConstraint(("rss_feed_id",), ("rss_feeds.id",), name="subscriptions_rss_feeds_id_fk", ondelete="CASCADE")
 
 
 class Sessions(MappingBaseClass):
@@ -46,4 +45,4 @@ class Sessions(MappingBaseClass):
     expiration_date = Column(DateTime, nullable=False)
     closing_date = Column(DateTime)
     is_alive = Column(Boolean, nullable=False, default=True)
-    ForeignKeyConstraint(("user_id",), "users.id", name="sessions_users_id_fk", ondelete="CASCADE")
+    ForeignKeyConstraint(("user_id",), ("users.id",), name="sessions_users_id_fk", ondelete="CASCADE")
