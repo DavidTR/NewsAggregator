@@ -5,6 +5,8 @@
 
 
 TODO: ¿Se puede incluir en el mensaje de error el nombre de los campos que no pasen las validaciones de forma elegante?
+TODO: ¿Incluir más información sobre el error (número de caracteres o mayúsculas requeridos, etc...).? NO INCURRIR EN
+      DAR DEMASIADA INFORMACION.
 """
 import re
 import string

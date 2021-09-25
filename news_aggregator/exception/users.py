@@ -13,7 +13,7 @@ class UserNotFound(BaseAppException):
     _default_error_message = "No user data found with the provided credentials"
 
 
-class EmailAlreadyRegistered(BaseAppException):
-    exception_code = "U-EMAIL-REG"
+class EmailAlreadyInUse(BaseAppException):
+    exception_code = "U-EMAIL-IN-USE"
 
     _default_error_message = "The email is already registered in the system. Did you forget your password?"

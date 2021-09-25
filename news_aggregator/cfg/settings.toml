@@ -16,7 +16,7 @@ driver = "MySQL ODBC 8.0 Unicode Driver"
 
 # Connection chain values.
 server = "localhost"
-database = "NewsAggregator"
+database = "NewsAggregatorBackend"
 
 # Only for ODBC connections.
 charset = "utf8mb4"

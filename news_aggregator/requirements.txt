@@ -3,3 +3,4 @@ dynaconf==3.1.7
 feedparser==6.0.8
 pyodbc==4.0.32
 pytz==2021.1
+bcrypt==3.2.0

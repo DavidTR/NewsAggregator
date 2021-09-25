@@ -2,6 +2,7 @@
 import datetime
 import string
 
+import bcrypt
 import feedparser
 import pyodbc
 import pytz
@@ -13,6 +14,7 @@ from cfg import config
 from db.connection import database_engine
 from db.mapping.users import Users
 from exception.base import BaseAppException
+from logic.users import SignUp
 
 """
                                                   - File description -
@@ -22,7 +24,7 @@ Playground file used to test frameworks, modules, code snippets and more.
 """
 
 
-def feedparser_test() -> None:
+def feedparser_stuff() -> None:
     """Feedparser module simple tests"""
     bbc_rss_feed = feedparser.parse("http://feeds.bbci.co.uk/news/world/rss.xml")
 
@@ -30,7 +32,7 @@ def feedparser_test() -> None:
         print(entry)
 
 
-def mysql_connection() -> None:
+def mysql_stuff() -> None:
 
     database_connection_settings = config.settings.DATABASE_CONNECTION
     connection_string = (
@@ -47,7 +49,7 @@ def mysql_connection() -> None:
     print(cursor.execute("SELECT * FROM tags;").fetchall())
 
 
-def timezones() -> None:
+def timezone_stuff() -> None:
     """Python UTC and timezones example code snippets"""
 
     # The datetime objects should be stored in UTC in the database, along with the timezone (in a different column).
@@ -73,8 +75,8 @@ def timezones() -> None:
     print(f"Madrid local time DST: {madrid_local_time.dst()}")
 
 
-def string_validations(test_string: str, b=None) -> None:
-    """String validation logic"""
+def string_stuff(test_string: str, b=None) -> None:
+    """String stuff"""
     print(any(map(str.isupper, test_string)))
 
     if not isinstance(test_string, str) and ascii_uppercase:
@@ -85,7 +87,7 @@ def string_validations(test_string: str, b=None) -> None:
     sum([character in test_string for character in list(special)])
 
 
-def sqlalchemy() -> None:
+def sqlalchemy_stuff() -> None:
     """SQLAlchemy stuff"""
     users = select(Users).where(Users.email == 'test@test.com')
 
@@ -93,9 +95,39 @@ def sqlalchemy() -> None:
         print(database_connection.execute(users).first())
 
 
+def bcrypt_stuff():
+    """Bcrypt stuff"""
+    # Bcrypt works with bytes strings, in order to generate a byte string from a conventional one, use the method
+    # "encode".
+    valid_password_example = "TESTTEST;?:-".encode(encoding='UTF-8')
+    print(valid_password_example)
+
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(valid_password_example, salt)
+    hashed_password = b"$2b$12$o8NBlnEx8HRAUKCCVyUZCOtSqc.Y1DssDj4yMpatB8chtmL6pqCxu"
+    print(salt)
+    print(hashed_password)
+
+    # Check if the password example matches the generated value. hashed_password has the generated salt as a prefix.
+    if bcrypt.checkpw(valid_password_example, hashed_password):
+        print("Match!")
+    else:
+        print("No match!")
+
+
+def signup_stuff() -> None:
+    signup = SignUp()
+    service_parameters = dict(name='Test 5', surname='Test Test', email='test5@test.com', password='TESTTEST;?:-')
+    signup.set_parameters(service_parameters)
+    signup.validate_parameters()
+    signup.execute()
+
+
 if __name__ == '__main__':
-    # feedparser_test()
-    # mysql_connection()
-    # timezones()
-    # string_validations("A2BF/?!;:cdefgh")
-    sqlalchemy()
+    # feedparser_stuff()
+    # mysql_stuff()
+    # timezone_stuff()
+    # string_stuff("A2BF/?!;:cdefgh")
+    # sqlalchemy_stuff()
+    bcrypt_stuff()
+    # signup_stuff()

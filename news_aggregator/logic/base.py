@@ -6,6 +6,7 @@
 """
 import abc
 import copy
+from typing import Any
 
 from exception.validation import MissingField, InvalidType
 
@@ -62,7 +63,7 @@ class BaseServiceClass(abc.ABC):
         """
         self._service_parameters_constraints = None
 
-    def set_parameters(self, service_parameters):
+    def set_parameters(self, service_parameters: dict) -> None:
         """
         Class method that sets the service parameters and stores them for later use. The parameters will be used
         internally only, so no getter needs to be implemented
@@ -71,19 +72,19 @@ class BaseServiceClass(abc.ABC):
         self._service_parameters = copy.deepcopy(service_parameters)
 
     @abc.abstractmethod
-    def preliminary_checks(self) -> None:
+    def preliminary_checks(self) -> Any:
         """Performs preliminary checks, so it is safe to execute the rest of the service logic and database access"""
         pass
 
     @abc.abstractmethod
-    def service_logic(self) -> None:
+    def service_logic(self) -> Any:
         """
         This method will contain the required business logic for the service. Like so, logic and database access
         will be separated, as needed for unit tests
         """
         pass
 
-    def execute(self) -> None:
+    def execute(self) -> Any:
         """
         This is the method that will be invoked in the web services to execute the logic of the service. If needed,
         this method can be overridden for a more customizable structure, depending on the service's nature
@@ -150,11 +151,14 @@ class BaseServiceClass(abc.ABC):
                 validator_parameters[0] = parameter_value
                 parameter_validator["function"](*validator_parameters)
 
-    def _save_to_database(self, *args) -> None:
+    def _save_to_database(self, *args) -> Any:
         """
         Saves whichever changes the service requires to the database. If needed, this method must be invoked in
         "execute"
         """
         pass
 
-
+    @staticmethod
+    def _ok_response() -> dict:
+        """Returns a default OK response"""
+        return {"status": True, "service_result": {}}
