@@ -17,19 +17,31 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.scoping import scoped_session
 
 from cfg import config
+from util.design_patterns import SingletonMetaclass
 
 
-def create_database_engine():
+class DatabaseEngine(metaclass=SingletonMetaclass):
     """
     Creates the engine, establishing connection to the database. This function will be called only once, as there must
      be only one engine, which lifespan is tied to the application that uses it. This is the most efficient way to use
-     it, as can be seen in the documentation: https://docs.sqlalchemy.org/en/14/core/connections.html
+     it, as can be seen in the documentation: https://docs.sqlalchemy.org/en/14/core/connections.html.
+
+     The Singleton metaclass manages ensures that only one instance of this class (and hence, only one database engine)
+     is created.
     """
-    database_connection_settings = config.settings.DATABASE_CONNECTION
-    return create_engine(f'mysql://{database_connection_settings["uid"]}'
-                         f':{database_connection_settings["pwd"]}'
-                         f'@{database_connection_settings["server"]}'
-                         f'/{database_connection_settings["database"]}')
+    def __init__(self, *args, **kwargs):
+
+        super(DatabaseEngine, self).__init__(*args, **kwargs)
+
+        database_connection_settings = config.settings.DATABASE_CONNECTION
+        self.engine = create_engine(f'mysql://{database_connection_settings["uid"]}'
+                                    f':{database_connection_settings["pwd"]}'
+                                    f'@{database_connection_settings["server"]}'
+                                    f'/{database_connection_settings["database"]}')
+
+    def get_database_engine(self):
+        """Returns the database engine"""
+        return self.engine
 
 
 """
@@ -45,4 +57,8 @@ the transaction will be closed (committed or rolled back) and the session will b
 See: https://docs.sqlalchemy.org/en/14/orm/contextual.html?highlight=scoped_session#using-thread-local-scope-with-web
 -applications
 """
-Session = scoped_session(sessionmaker(bind=create_database_engine()))
+
+# As this instance is global, any other method or function can also get and use the engine.
+database_engine = DatabaseEngine().get_database_engine()
+
+Session = scoped_session(sessionmaker(bind=database_engine))

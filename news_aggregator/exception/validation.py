@@ -4,6 +4,9 @@
 ------------------------------------------------------------------------------------------------------------------------
 Validation exceptions. These exceptions should be used whenever a validation needs to be performed. For example,
 parameter type/format or logic conditions validations
+
+
+TODO: Revisar los mensajes de excepción
 """
 from exception.base import BaseAppException
 
@@ -30,10 +33,17 @@ class IncorrectFormat(ValidationException):
 
 
 class InsufficientLength(ValidationException):
-    """This exception will be risen when a field has in insufficient character length"""
-    exception_code = "VAL-LENGTH"
+    """This exception will be risen when a field does not have the minimum number of characters"""
+    exception_code = "VAL-MIN-LENGTH"
 
     _default_error_message = "The field does not have the required minimum length"
+
+
+class MaxLengthExceeded(ValidationException):
+    """This exception will be risen when a field has in insufficient character length"""
+    exception_code = "VAL-MAX-LENGTH"
+
+    _default_error_message = "The field's length surpasses its maximum"
 
 
 class NotEnoughCapitalLetters(ValidationException):
@@ -52,6 +62,11 @@ class NotEnoughSpecialCharacters(ValidationException):
 
 class MissingField(ValidationException):
     """This exception will be risen when a field has not been provided"""
-    exception_code = "VAL-MISSING"
+    exception_code = "VAL-PARAM-MISSING"
 
     _default_error_message = "The field has not been informed"
+
+
+class ParametersNotSet(ValidationException):
+    """This exception will be risen if the parameters have not been set and the service tries to validate them"""
+    exception_code = "VAL-PARAMS-NOT-SET"

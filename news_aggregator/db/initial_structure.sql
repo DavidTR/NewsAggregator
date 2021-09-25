@@ -16,9 +16,9 @@ USE NewsAggregator;
 -- users table
 CREATE TABLE users (
     id INT AUTO_INCREMENT,
-    name VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COLLATE utf8mb4_bin,
+    name VARCHAR(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin COLLATE utf8mb4_bin,
     surname VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
-    email VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+    email VARCHAR(25) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
     password VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
     is_active BOOLEAN DEFAULT TRUE NOT NULL,
     PRIMARY KEY(id),
@@ -28,7 +28,7 @@ CREATE TABLE users (
 -- rss_feeds table
 CREATE TABLE rss_feeds (
     id INT AUTO_INCREMENT,
-    url VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+    url VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
     title VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     PRIMARY KEY(id),
     UNIQUE KEY(url)
@@ -49,8 +49,8 @@ CREATE TABLE rss_feeds_news (
 -- tags table
 CREATE TABLE tags (
     id INT AUTO_INCREMENT,
-    title VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
-    description VARCHAR(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
+    title VARCHAR(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+    description VARCHAR(400) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     PRIMARY KEY(id)
 ) COMMENT = 'Tags will be used to classify the RSS feeds and identify users interests';
 
@@ -72,7 +72,9 @@ CREATE TABLE subscriptions (
     CONSTRAINT subscriptions_rss_feeds_id_fk FOREIGN KEY(rss_feed_id) REFERENCES rss_feeds(id) ON DELETE CASCADE
 ) COMMENT = 'Users subscribed to RSS feeds';
 
+'
 -- sessions table
+-- OAuth and Stateless APIs will not use classic sessions to operate.
 CREATE TABLE sessions (
     id INT AUTO_INCREMENT,
     user_id INT NOT NULL,
@@ -85,4 +87,5 @@ CREATE TABLE sessions (
     CONSTRAINT sessions_users_id_fk FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE KEY(session_id),
     INDEX(user_id)
-) COMMENT = 'All the sessions that users create when they log-in will be stored here';
+) COMMENT = \'All the sessions that users create when they log-in will be stored here\';
+'

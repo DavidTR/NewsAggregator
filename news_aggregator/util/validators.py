@@ -10,10 +10,10 @@ import re
 import string
 
 from exception.validation import IncorrectFormat, InsufficientLength, NotEnoughCapitalLetters, \
-    NotEnoughSpecialCharacters
+    NotEnoughSpecialCharacters, MaxLengthExceeded
 
 
-def email_format_validator(email: str) -> None:
+def is_valid_email(email: str) -> None:
     """Checks if the given email is valid"""
     email_regex = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
 
@@ -24,13 +24,19 @@ def email_format_validator(email: str) -> None:
 
 def has_minimum_length(test_string: str, min_length: int = 8) -> None:
     """Checks if the given password has 'max_length' characters minimum"""
-    if not isinstance(test_string, str) or len(test_string) > min_length:
+    if not isinstance(test_string, str) or len(test_string) < min_length:
         raise InsufficientLength()
+
+
+def surpasses_maximum_length(test_string: str, max_length: int = 8) -> None:
+    """Checks if the given password has 'max_length' characters maximum"""
+    if not isinstance(test_string, str) or len(test_string) > max_length:
+        raise MaxLengthExceeded()
 
 
 def has_minimum_capital_letters(test_string: str,  min_capital_letters: int = 2) -> None:
     """Checks if the given password has at least one capital letter"""
-    if not isinstance(test_string, str) or not sum(map(str.isupper, test_string)) < min_capital_letters:
+    if not isinstance(test_string, str) or sum(map(str.isupper, test_string)) < min_capital_letters:
         raise NotEnoughCapitalLetters()
 
 

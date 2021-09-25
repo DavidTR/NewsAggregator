@@ -7,7 +7,11 @@ import pyodbc
 import pytz
 from string import ascii_uppercase
 
+from sqlalchemy import select
+
 from cfg import config
+from db.connection import database_engine
+from db.mapping.users import Users
 from exception.base import BaseAppException
 
 """
@@ -81,8 +85,17 @@ def string_validations(test_string: str, b=None) -> None:
     sum([character in test_string for character in list(special)])
 
 
+def sqlalchemy() -> None:
+    """SQLAlchemy stuff"""
+    users = select(Users).where(Users.email == 'test@test.com')
+
+    with database_engine.connect() as database_connection:
+        print(database_connection.execute(users).first())
+
+
 if __name__ == '__main__':
     # feedparser_test()
     # mysql_connection()
     # timezones()
-    string_validations("A2BF/?!;:cdefgh")
+    # string_validations("A2BF/?!;:cdefgh")
+    sqlalchemy()
