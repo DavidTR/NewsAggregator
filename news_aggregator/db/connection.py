@@ -9,6 +9,8 @@ The session will be created by the method scoped_session, which
 See:
     - https://docs.sqlalchemy.org/en/14/orm/contextual.html
     - https://docs.sqlalchemy.org/en/14/orm/session_basics.html
+    - https://docs.sqlalchemy.org/en/14/orm/session.html
+    - https://docs.sqlalchemy.org/en/14/core/connections.html
     - https://docs.sqlalchemy.org/en/14/core/connections.html?highlight=engine#module-sqlalchemy.engine
 
 """

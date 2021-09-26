@@ -19,8 +19,8 @@ from util.validators import has_minimum_length, is_valid_email, has_minimum_capi
 
 class SignUp(BaseServiceClass):
 
-    def __init__(self):
-        super(SignUp, self).__init__()
+    def __init__(self, *args, **kwargs):
+        super(SignUp, self).__init__(*args, **kwargs)
         self._service_parameters_constraints = {
             "name": {
                 "type": str,
@@ -119,12 +119,21 @@ class SignUp(BaseServiceClass):
                                               email=self._service_parameters["email"],
                                               password=hashed_password)
 
-        # TODO: Capturar esta excepción y mostrar un mensaje genérico, pero apuntarla en algún lado.
+        # TODO: Capturar esta excepción y mostrar un mensaje genérico, apuntarla en algún lado.
+        # The methods "commit" and "rollback" are invoked automatically if context managers are used with engines or
+        # sessions. SQLAlchemy recommends this as a best practice:
+        # https://docs.sqlalchemy.org/en/13/core/connections.html?highlight=dispose#using-transactions
         with database_engine.connect() as database_connection:
             database_connection.execute(new_user_query)
 
 
 class UserData:
+
+    def __init__(self, *args, **kwargs):
+        super(UserData, self).__init__()
+        self._service_parameters_constraints = {
+
+        }
 
     @staticmethod
     def retrieve_user_data(user: Users) -> dict:

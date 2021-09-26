@@ -290,3 +290,17 @@ Donde:
 * `<hash>`: Resultado de la función de hashing.
 
 Django ofrece la posibilidad de cambiar el algoritmo y modificar algunos parámetros, aunque no es recomendable si no es completamente necesario.
+
+## Arreglo para error NO_PUBKEY en Linux Mint
+
+El error en cuestión se obtiene al usar ciertos mirrors para su uso con `apt-get`:
+
+> W: GPG error: https://mirror.dogado.de/linuxmint tara Release: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY A6616109451BBBF2
+
+La solución pasa por obtener la clave pública y almacenarla, con el siguiente comando:
+
+```
+sudo apt-key adv --recv-keys --keyserver keyserver.ubuntu.com A6616109451BBBF2
+```
+
+Como argumento (o argumentos si son varios mirrors los que fallan), hay que indicar la clave o claves públicas que `apt-get update` no puede obtener.

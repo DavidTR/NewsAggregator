@@ -2,13 +2,17 @@
 """
                                                   - File description -
 ------------------------------------------------------------------------------------------------------------------------
+Parent class for all classes.
 
+This class won't have any test methods, so the unittest module doesn't try to instantiate it and run the tests, leading
+to counting TestBase as a test class, when it's not. Do not add test methods to this class (even if they are abstract),
+unittest will try to instantiate this class and execute its tests and it will fail because it's an abstract class.
 """
 import unittest
 import abc
 
 
-class TestBase(unittest.TestCase):
+class TestBase(unittest.TestCase, metaclass=abc.ABCMeta):
 
     def __init__(self, *args, **kwargs):
         super(TestBase, self).__init__(*args, **kwargs)
