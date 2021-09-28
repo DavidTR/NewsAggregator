@@ -15,8 +15,6 @@ class ValidationException(BaseAppException):
     """Base class for validation exceptions"""
     exception_code = "VAL"
 
-    pass
-
 
 class InvalidType(ValidationException):
     """This exception will be risen when a field has an invalid type"""

@@ -78,14 +78,15 @@ class BaseService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def service_logic(self) -> Any:
+    def service_logic(self) -> dict:
         """
         This method will contain the required business logic for the service. Like so, logic and database access
-        will be separated, as needed for unit tests
+        will be separated, as needed for unit tests.
+        :return Must return a dictionary with the data to be returned to the caller.
         """
         pass
 
-    def execute(self) -> Any:
+    def execute(self) -> dict:
         """
         Default execution flow for every service. There are several hooks for the children classes to implement. If
         needed, this method can be overridden for a more customizable structure, depending on the service's nature
@@ -166,11 +167,6 @@ class BaseService(abc.ABC):
         "execute"
         """
         pass
-
-    @staticmethod
-    def _service_response() -> dict:
-        """Returns a default response"""
-        return {"data": {}}
 
 
 ServiceClassType = Type[BaseService]

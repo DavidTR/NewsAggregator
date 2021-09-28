@@ -3,6 +3,12 @@
                                                   - File description -
 ------------------------------------------------------------------------------------------------------------------------
 Base exception classes.
+
+TODO: Este fichero podría contener todas las clases base de cada archivo exception, para que cada tipo de excepción
+ pueda ser identificada por su clase base y puedan ser atrapadas en bloques except con más facilidad. Se propone cambiar
+ el nombre de BaseAppException por algo como RootException y crear BusinessLogicException, ValidationException,
+ ApiException, etc... a partir de ella. Preguntarse si es necesario crear estas clases "dummy" para esta clasificación,
+ ¿hay una mejor manera de clasificar excepciones?.
 """
 
 
