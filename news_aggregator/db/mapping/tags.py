@@ -5,7 +5,7 @@
 Mapping classes for tags-oriented tables. See db/mapping/__init__.py for more information.
 
 """
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, JSON
+from sqlalchemy import Column, Integer, String
 
 from db.mapping import MappingBaseClass
 

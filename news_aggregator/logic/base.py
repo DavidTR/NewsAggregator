@@ -6,12 +6,13 @@
 """
 import abc
 import copy
-from typing import Any
+from typing import Any, TypeVar, Type
 
+from exception.base import BaseAppException
 from exception.validation import MissingField, InvalidType
 
 
-class BaseServiceClass(abc.ABC):
+class BaseService(abc.ABC):
     """
     This class will have the required structure for all the service classes to inherit from. This will be the default
     service API for each application service.
@@ -31,7 +32,7 @@ class BaseServiceClass(abc.ABC):
     @abc.abstractmethod
     def __init__(self, *args, **kwargs):
         """This method must load the parameters."""
-        super(BaseServiceClass, self).__init__(*args, **kwargs)
+        super(BaseService, self).__init__(*args, **kwargs)
 
         # The service parameters, that will be loaded in the API.
         self._service_parameters = None
@@ -86,11 +87,19 @@ class BaseServiceClass(abc.ABC):
 
     def execute(self) -> Any:
         """
-        This is the method that will be invoked in the web services to execute the logic of the service. If needed,
-        this method can be overridden for a more customizable structure, depending on the service's nature
+        Default execution flow for every service. There are several hooks for the children classes to implement. If
+        needed, this method can be overridden for a more customizable structure, depending on the service's nature
         """
+        # Hook for children classes.
         self.preliminary_checks()
-        self.service_logic()
+
+        # This method will implement the main service logic, which must not rely on the database.
+        service_result = self.service_logic()
+
+        # Hook for children classes.
+        self._save_to_database()
+
+        return service_result
 
     def validate_parameters(self) -> None:
         """
@@ -159,6 +168,9 @@ class BaseServiceClass(abc.ABC):
         pass
 
     @staticmethod
-    def _ok_response() -> dict:
-        """Returns a default OK response"""
-        return {"status": True, "service_result": {}}
+    def _service_response() -> dict:
+        """Returns a default response"""
+        return {"data": {}}
+
+
+ServiceClassType = Type[BaseService]

@@ -4,8 +4,6 @@
 ------------------------------------------------------------------------------------------------------------------------
 
 """
-import unittest
-
 from logic.users import UserData
 from test.base import TestBase
 

@@ -2,6 +2,17 @@
 
 En este archivo se irán recopilando notas sobre temas interesantes que vayan surgiendo durante la codificación del proyecto.
 
+## Crear usuario en MySQL con privilegios
+
+Para crear un nuevo usuario en un servidor MySQL, bastará con ejecutar las siguientes sentencias:
+
+```sql
+CREATE USER 'news_aggregator'@'localhost' IDENTIFIED WITH mysql_native_password BY 'news_aggregator';
+GRANT ALL ON `NewsAggregatorBackend`.* TO 'news_aggregator'@'localhost';
+```
+
+En este ejemplo se crea el usuario `news_aggregator` con la misma contraseña. A este nuevo usuario se le dan todos los permisos en la base de datos `NewsAggregatorBackend`.
+
 ## Fechas, almacenamiento y tratamiento de distintas timezones. 
 
 Lo mejor es almacenar las fechas en formato UTC. Si es necesario hacer distinciones entre distintos usuarios (que se encuentren en zonas horarias distintas) se recomienda usar datetime en el backend y almacenar las timezones en formato IANA (estándar) en base de datos, en una columna independiente. De esta forma el backend podrá trabajar con las fechas y formatearlas con la timezone del cliente cuando sea necesario (normalmente para imprimirlo para humanos), pero siempre las guardará en UTC en base de datos.

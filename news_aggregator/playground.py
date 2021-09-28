@@ -13,8 +13,7 @@ from sqlalchemy import select
 from cfg import config
 from db.connection import database_engine
 from db.mapping.users import Users
-from exception.base import BaseAppException
-from logic.users import SignUp
+from logic.signup import SignUp
 
 """
                                                   - File description -
@@ -75,7 +74,7 @@ def timezone_stuff() -> None:
     print(f"Madrid local time DST: {madrid_local_time.dst()}")
 
 
-def string_stuff(test_string: str, b=None) -> None:
+def string_stuff(test_string: str) -> None:
     """String stuff"""
     print(any(map(str.isupper, test_string)))
 
@@ -104,7 +103,6 @@ def bcrypt_stuff():
 
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(valid_password_example, salt)
-    hashed_password = b"$2b$12$o8NBlnEx8HRAUKCCVyUZCOtSqc.Y1DssDj4yMpatB8chtmL6pqCxu"
     print(salt)
     print(hashed_password)
 
@@ -129,5 +127,5 @@ if __name__ == '__main__':
     # timezone_stuff()
     # string_stuff("A2BF/?!;:cdefgh")
     # sqlalchemy_stuff()
-    bcrypt_stuff()
-    # signup_stuff()
+    # bcrypt_stuff()
+    signup_stuff()

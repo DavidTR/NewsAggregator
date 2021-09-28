@@ -7,7 +7,7 @@ Mapping classes for user-oriented tables. See db/mapping/__init__.py for more in
 """
 import datetime
 
-from sqlalchemy import Column, Integer, String, Boolean, PrimaryKeyConstraint, ForeignKeyConstraint, DateTime
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKeyConstraint, DateTime
 
 from db.mapping import MappingBaseClass
 

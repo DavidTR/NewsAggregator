@@ -10,7 +10,7 @@ import unittest
 
 from exception.validation import IncorrectFormat, InsufficientLength, \
     NotEnoughSpecialCharacters, NotEnoughCapitalLetters, InvalidType, MaxLengthExceeded, MissingField
-from logic.users import SignUp
+from logic.signup import SignUp
 from test.base import TestBase
 
 

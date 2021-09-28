@@ -83,6 +83,7 @@ Estas características serán incorporadas a todas las versiones:
 * GraphQL que coexista con el API REST.
 * Configuración de Supervisor.
 * Instalación y configuración de Nginx.
+* Usar long polling para simular conexiones siempre abiertas entre cliente y servidor: https://en.wikipedia.org/wiki/Push_technology#Long_polling. Tornado funciona muy bien con esta técnica, por lo visto.
 
 ## Requerimientos descartados:
 

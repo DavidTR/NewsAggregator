@@ -69,6 +69,31 @@ El sistema está compuesto por los siguientes elementos lógicos:
 5. Servidor web externo: Nginx.
 6. Control de procesos: Supervisor.
 
+## Formato de respuesta
+
+El cuerpo de todas las respuestas seguirán una misma estructura:
+
+```
+{
+    "data": SERVICE_JSON_DATA <TODO>,
+    ["error": ERROR_JSON_DATA] <TODO>
+}
+```
+
+Estos datos estarán incluidos en una respuesta HTTP estándar. La aplicación usará los siguientes códigos HTTP para comunicar el resultado de las llamadas recibidas:
+
+| Código HTTP |   Descripción             |        Condiciones                 |
+|:---------------:|:------------------:|:------------------------------------:|
+| 200              | Servicio ejecutado con éxito            | El servicio se ejecuta sin problemas, sin lanzar excepciones
+|               |             | 
+|               |             | 
+|               |             | 
+|               |             | 
+|               |             | 
+|               |             | 
+
+Ver: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+
 # Referencias
 
 * https://www.geeksforgeeks.org/designing-use-cases-for-a-project/
