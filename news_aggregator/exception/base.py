@@ -9,12 +9,15 @@ TODO: Este fichero podría contener todas las clases base de cada archivo except
  el nombre de BaseAppException por algo como RootException y crear BusinessLogicException, ValidationException,
  ApiException, etc... a partir de ella. Preguntarse si es necesario crear estas clases "dummy" para esta clasificación,
  ¿hay una mejor manera de clasificar excepciones?.
+TODO: Revisar los códigos HTTP para cada excepción, ¿son los más adecuados en cada caso?.
+TODO: ¿Tiene sentido fijar los valores de error_code y recommendation_message en __init__?, quizás dejarlos a nivel
+ sería mejor alternativa.
 """
 
 
 class BaseAppException(Exception):
 
-    # All exceptions will have an unique alphanumeric code.
+    # All exceptions will have an unique alphanumeric code and a default error message.
     exception_code = ""
     _default_error_message = "An error occurred, please try again"
 
@@ -24,10 +27,22 @@ class BaseAppException(Exception):
     #  esta lógica sin propagar esta lista.
     __exception_code_registry = []
 
-    def __init__(self, error_message: str = None, formatting_data: dict = None) -> None:
+    def __init__(self, error_message: str = None, formatting_data: dict = None,
+                 recommendation_message: str = None) -> None:
         super(BaseAppException, self).__init__()
         self._error_message = error_message or self._default_error_message
         self._formatting_data = formatting_data or {}
+
+        # A HTTP status code that will be returned along the error data as the server HTTP response. Depending on
+        # the exception, this code can change, but 409 can be used as the standard for internal, business-logic
+        # related errors.
+        # See:
+        #   - https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/409
+        #   - https://softwareengineering.stackexchange.com/q/341732/402704
+        self._http_status_code = 409
+
+        # Some exceptions can give a recommendation to the caller on how to fix an error on their side.
+        self._recommendation_message = None
 
     def __init_subclass__(cls, **kwargs) -> None:
         """Enforces the uniqueness of exception_code for every exception subclass"""
@@ -41,6 +56,14 @@ class BaseAppException(Exception):
     @property
     def error_message(self) -> str:
         return self._error_message.format(**self._formatting_data)
+
+    @property
+    def http_status_code(self) -> int:
+        return self._http_status_code
+
+    @property
+    def recommendation_message(self) -> str:
+        return self._recommendation_message
 
     def __str__(self) -> str:
         """

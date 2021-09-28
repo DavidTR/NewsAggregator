@@ -15,6 +15,18 @@ class ValidationException(BaseAppException):
     """Base class for validation exceptions"""
     exception_code = "VAL"
 
+    def __init__(self, *args, **kwargs):
+        super(ValidationException, self).__init__(*args, **kwargs)
+
+        # For validation internal exceptions will return a 422 HTTP code. It's more specific than 409 and relates more
+        # to the fact that, although it was well formed, there were semantic errors in the request .
+        # See:
+        #   - https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/422
+        #   - https://www.bennadel.com/blog/2434-http-status-codes-for-invalid-data-400-vs-422.htm
+        # NOTE: If a validation exception isn't related to this scenario, it must overwrite its own constructor to
+        # set a more suitable HTTP error code.
+        self._http_status_code = 422
+
 
 class InvalidType(ValidationException):
     """This exception will be risen when a field has an invalid type"""
@@ -64,7 +76,15 @@ class MissingField(ValidationException):
 
     _default_error_message = "The field has not been informed"
 
+    def __init__(self, *args, **kwargs):
+        super(ValidationException, self).__init__(*args, **kwargs)
+        self._http_status_code = 400
+
 
 class ParametersNotSet(ValidationException):
     """This exception will be risen if the parameters have not been set and the service tries to validate them"""
     exception_code = "VAL-PARAMS-NOT-SET"
+
+    def __init__(self, *args, **kwargs):
+        super(ValidationException, self).__init__(*args, **kwargs)
+        self._http_status_code = 400

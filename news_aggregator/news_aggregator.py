@@ -16,49 +16,42 @@ from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 from tornado.options import define, parse_command_line, options
 from tornado.web import RequestHandler, Application, HTTPError
+from tornado.escape import json_encode
+
+from api.signup import SignUpProcessor
 
 
-class SignUpHandler(RequestHandler):
-    """This handler should not exist, originally the sign up method was going to be a POST in the Users handler,
-    but Tornado is not fully compatible with """
+class BaseRequestHandler(RequestHandler):
+
+    def set_default_headers(self):
+        self.set_header("Content-Type", 'application/json')
+
+    def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
+        pass
+
+
+class SignUpHandler(BaseRequestHandler):
+    """
+    This handler should not exist, originally the sign up method was going to be a POST in the Users handler,
+    but Tornado is not fully compatible with specific URL patterns for handler methods (an URL pattern must match all
+    handler methods, there are no distinctions)
+    TODO: ¿Se puede cambiar esto último e incluir este endpoint en UsersHandler?
+    """
 
     SUPPORTED_METHODS = ("POST",)
 
-    def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
-        pass
-
     def post(self):
         """User sign up"""
-        # TESTS ## TESTS ## TESTS ## TESTS ## TESTS ## TESTS ## TESTS #
-        if self.request.body_arguments:
-            from logic.signup import SignUp
+        processor = SignUpProcessor()
+        status_code, service_response = processor.signup(self.request)
 
-            signup = SignUp()
-            service_parameters = dict(name=self.get_body_argument("name", default=None),
-                                      surname=self.get_body_argument("surname", default=None),
-                                      email=self.get_body_argument("email", default=None),
-                                      password=self.get_body_argument("password", default=None))
-            signup.set_parameters(service_parameters)
-            signup.validate_parameters()
-            service_response = signup.execute()
-
-            return service_response
-        else:
-            # Instead of returning a 500 error code, if no body arguments are given, a 400 code (Bad Request) is
-            # returned.
-            raise HTTPError(400)
-        # TESTS ## TESTS ## TESTS ## TESTS ## TESTS ## TESTS ## TESTS #
+        self.set_status(status_code)
+        self.write(json_encode(service_response))
 
 
-class UsersHandler(RequestHandler):
+class UsersHandler(BaseRequestHandler):
 
     SUPPORTED_METHODS = ("GET", "PUT", "DELETE")
-
-    def write_error(self, status_code: int, **kwargs: Any) -> None:
-        print(kwargs)
-
-    def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
-        pass
 
     def get(self, user_id: int):
         """User data: Personal information, subscriptions and interests"""
@@ -86,12 +79,9 @@ class UsersHandler(RequestHandler):
         self.write(f"USERS -> DELETE ({user_id})")
 
 
-class LoginHandler(RequestHandler):
+class LoginHandler(BaseRequestHandler):
 
     SUPPORTED_METHODS = ("POST",)
-
-    def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
-        pass
 
     def post(self):
         """Login request"""
@@ -109,13 +99,9 @@ class LoginHandler(RequestHandler):
             raise HTTPError(400)
 
 
-class SubscriptionsHandler(RequestHandler):
+class SubscriptionsHandler(BaseRequestHandler):
 
     SUPPORTED_METHODS = ("GET", "POST", "PATCH", "DELETE")
-
-    def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
-        """This handler should use this to create streams of news (see get method)"""
-        pass
 
     def get(self, user_id: int):
         """Update subscriptions feeds"""
@@ -166,12 +152,9 @@ class SubscriptionsHandler(RequestHandler):
         self.write(response)
 
 
-class CatalogHandler(RequestHandler):
+class CatalogHandler(BaseRequestHandler):
 
     SUPPORTED_METHODS = ("GET",)
-
-    def data_received(self, chunk: bytes) -> Optional[Awaitable[None]]:
-        pass
 
     def get(self):
         response = {
