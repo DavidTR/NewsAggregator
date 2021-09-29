@@ -9,7 +9,8 @@ from typing import Any
 from sqlalchemy.sql import select
 
 from db.connection import database_engine
-from db.mapping.users import Users
+from db.mapping.rss_feeds import RSSFeeds
+from db.mapping.users import Users, Subscriptions
 from logic.base import BaseService
 from util.validators import is_valid_email, surpasses_maximum_length
 
@@ -41,13 +42,32 @@ class UserData(BaseService):
 
     def service_logic(self) -> dict:
         # Get the database record for the user.
-        user_query = select(Users).where(Users.email == self._service_parameters["email"])
-        user_record = None
+        # TODO: Gestionar excepciones.
 
+        user_data = subscriptions_data = None
+
+        # TODO: Por Dios, implementar esto con relationships para que no sea necesario hacer tantas peticiones...
+        #  Habrá que agregar relationships en users y en rss_feeds, para que subscriptions tenga acceso a los datos de
+        #  usuarios y de los feeds de forma automática
         with database_engine.connect() as database_connection:
-            user_record = database_connection.execute(user_query).first()
+            user_data_query = select(Users.id, Users.name, Users.surname).where(Users.email == self._service_parameters["email"])
+            user_data = database_connection.execute(user_data_query).first()
+            # JOIN example.
+            subscriptions_data_query = select(Users.id, RSSFeeds.title, RSSFeeds.url).join(Subscriptions, Subscriptions.user_id == Users.id).join(RSSFeeds, RSSFeeds.id == Subscriptions.rss_feed_id).where(Subscriptions.user_id == user_data.id)
 
-        print(user_record)
+            subscriptions_data = database_connection.execute(subscriptions_data_query).all()
+
+        result = {
+            "user_data": {
+                "name": user_data.name,
+                "surname": user_data.surname,
+                "email": self._service_parameters["email"]
+            },
+            "subscriptions": [{"name": subscription.title, "url": subscription.url} for subscription in subscriptions_data]
+        }
+
+        print(result)
+        return result
 
 
 if __name__ == '__main__':

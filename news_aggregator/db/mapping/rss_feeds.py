@@ -45,4 +45,3 @@ class RSSFeedsTags(MappingBaseClass):
 
     rss_feed_id = Column(Integer, ForeignKey("rss_feeds.id", name="rss_feeds_tags_rss_feeds_id_fk", ondelete="CASCADE"), primary_key=True)
     tag_id = Column(Integer, ForeignKey("tags.id", name="rss_feeds_tags_tags_id_fk", ondelete="CASCADE"), primary_key=True)
-    PrimaryKeyConstraint(("rss_feed_id", "tag_id"))

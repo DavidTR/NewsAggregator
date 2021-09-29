@@ -32,7 +32,7 @@ class Users(MappingBaseClass):
     password = Column(String(100), nullable=False)
     is_active = Column(Boolean, nullable=False)
     # interests = relationship(Tags) # TODO: Crear una nueva tabla de intereses para usuarios.
-    subscriptions = relationship("Subscriptions")
+    # subscriptions = relationship("RSSFeeds", secondary=Subscriptions)
 
 
 class Sessions(MappingBaseClass):
