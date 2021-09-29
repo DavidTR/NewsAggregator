@@ -87,7 +87,8 @@ class SignUp(BaseService):
         }
 
     def preliminary_checks(self) -> None:
-        """Checks if the user identified by "email" already exists in the database"""
+
+        # Checks if the user identified by "email" already exists in the database
         user_email = self._service_parameters["email"]
 
         is_email_already_used_query = select(Users).where(Users.email == user_email)
@@ -97,13 +98,14 @@ class SignUp(BaseService):
             if is_email_already_used:
                 raise EmailAlreadyInUse()
 
-    def service_logic(self) -> Any:
-        """This class does not have extra logic"""
+    def service_logic(self) -> dict:
+
+        # This class does not have extra logic (YET)
         # TODO: Enviar correos electrónicos o notificaciones.
         pass
 
     def _save_to_database(self) -> None:
-        """Effectively creates the new user by inserting the data in the database"""
+
         password = self._service_parameters["password"]
         hashed_password = hash_password(password)
 

@@ -2,7 +2,9 @@
 """
                                                   - File description -
 ------------------------------------------------------------------------------------------------------------------------
+Base class for all the services.
 
+TODO: Crear tutorial sobre cómo heredar de esta clase y cómo fijar los valores.
 """
 import abc
 import copy

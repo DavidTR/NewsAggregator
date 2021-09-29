@@ -173,6 +173,11 @@ class SignUpTest(TestBase):
             with self.assertRaises(MissingField):
                 service_instance.validate_parameters()
 
+    def test_service_logic(self):
+        """Test """
+        # This service has no specific business logic (YET).
+        pass
+
 
 if __name__ == '__main__':
     unittest.main()

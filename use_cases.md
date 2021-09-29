@@ -109,15 +109,29 @@ Un usuario pide un listado completo de sus datos.
     1. Listado OK. 
         * Pasos:
             * El usuario indica los datos requeridos con un formato y tipo adecuados y llama al recurso de listado de datos de usuario.
-            * El sistema recibe la llamada y hace las siguientes comprobaciones:
-                1. Se comprueba que los datos son correctos en tipo y formato.
-                2. Se comprueba que el usuario exista y esté activo.
-                3. Se comprueba si la contraseña proporcionada coincide con la almacenada en base de datos. <span style="background-color:red"> PENDIENTE DE IMPLEMENTAR OAUTH 2.0, ACTUALIZAR ESTE PASO ENTONCES </span>
+            * Se supone que el usuario existe y está activo, pues previamente ha tenido que obtener un token de acceso y para ello se han hecho todas estas comprobaciones.
             * Una vez pasadas todas las comprobaciones con éxito, el sistema sigue el siguiente flujo de ejecución: 
                 1. Se recuperan los registros necesarios de base de datos para componer la respuesta del servicio.
                 2. Se seleccionan los datos requeridos de cada registro y se compone la respuesta final.
                 3. Se devuelve una respuesta exitosa desde el recurso.
         * Postcondiciones:
-            * 
-
+            * Ninguna.
 * Escenarios KO:
+    1. Argumentos de tipo y/o formato incorrecto. 
+        * Pasos:
+            * El usuario llama al recurso de listado de datos de usuario con uno o más datos erróneos.
+            * El sistema recibe la llamada y hace las siguientes comprobaciones:
+                1. Se comprueba que los datos son correctos en tipo y formato.
+            * El sistema detecta que un parámetro tiene un tipo o formato incorrecto y emite una excepción dando información detallada y clara al usuario, abortando el proceso.
+        * Postcondiciones:
+            * Ninguna.
+    2. Error no controlado en el sistema.
+        * Pasos:
+            * El usuario indica los datos requeridos con un formato y tipo adecuados y llama al recurso de listado de datos de usuario.
+            * El sistema recibe la llamada y hace las siguientes comprobaciones:
+                1. Se comprueba que los datos son correctos en tipo y formato. 
+                2. Se comprueba que el correo electrónico pertenece al usuario que consume el recurso.
+            * El sistema experimenta un error no controlado en algún momento durante la ejecución del recurso y emite una excepción dando información detallada y clara al usuario, abortando el proceso. Se deberá cerrar conectores abiertos y liberar recursos.
+        * Postcondiciones:
+            * Ninguna.
+
