@@ -75,15 +75,27 @@ class BaseService(abc.ABC):
         self._service_parameters = copy.deepcopy(service_parameters)
 
     @abc.abstractmethod
-    def preliminary_checks(self) -> Any:
-        """Performs preliminary checks, so it is safe to execute the rest of the service logic and database access"""
+    def prepare(self) -> Any:
+        """
+        Loads the data needed by the service, over which business logic will be applied.
+        :return Returns a dictionary that holds the required data for preliminary_checks and service_logic methods to
+        operate.
+        """
+        pass
+
+    def preliminary_checks(self, *args) -> None:
+        """
+        Performs preliminary checks, so it is safe to execute the business logic implemented in the method
+        service_logic
+        """
         pass
 
     @abc.abstractmethod
-    def service_logic(self) -> dict:
+    def service_logic(self, *args) -> dict:
         """
-        This method will contain the required business logic for the service. Like so, logic and database access
-        will be separated, as needed for unit tests.
+        This method will contain the required logic for the service. Like so, logic and database access will be
+        separated, as needed for unit tests. As this is the method that returns a response to the caller, this method
+        should be the one to implement the main logic of the service.
         :return Must return a dictionary with the data to be returned to the caller.
         """
         pass
@@ -93,13 +105,16 @@ class BaseService(abc.ABC):
         Default execution flow for every service. There are several hooks for the children classes to implement. If
         needed, this method can be overridden for a more customizable structure, depending on the service's nature
         """
+        service_preliminary_data = self.prepare()
+
         # Hook for children classes.
-        self.preliminary_checks()
+        self.preliminary_checks(*service_preliminary_data)
 
         # This method will implement the main service logic, which must not rely on the database.
-        service_result = self.service_logic()
+        service_result = self.service_logic(*service_preliminary_data)
 
         # Hook for children classes.
+        # TODO: ¿Agregar datos a la respuesta del servicio sobre este método?
         self._save_to_database()
 
         return service_result

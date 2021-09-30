@@ -7,7 +7,8 @@
 import random
 import string
 
-from exception.validation import IncorrectFormat, MaxLengthExceeded, InvalidType, MissingField
+from const.data import MIN_INT_VALUE, MAX_INT_VALUE
+from exception.validation import InvalidType, MissingField, IntegerTooLarge, IntegerTooSmall
 from logic.users import UserData
 from test.base import TestBase
 
@@ -19,20 +20,20 @@ class TestUserData(TestBase):
         self._service_class = UserData
 
         self._valid_parameters_test_values = {
-            "email": "test@test.com"
+            "user_id": 1
         }
 
         self._service_parameters_constraints = {
-            "email": {
-                "type": str,
+            "user_id": {
+                "type": int,
                 "validations": [
                     {
-                        "incorrect_parameter_value": "Test@",
-                        "raises": IncorrectFormat
+                        "incorrect_parameter_value": MAX_INT_VALUE,
+                        "raises": IntegerTooLarge
                     },
                     {
-                        "incorrect_parameter_value": "Testtesttesttesttest@test.com",
-                        "raises": MaxLengthExceeded
+                        "incorrect_parameter_value": MIN_INT_VALUE,
+                        "raises": IntegerTooSmall
                     }
                 ],
                 "is_optional": False
@@ -124,4 +125,7 @@ class TestUserData(TestBase):
 
     def test_service_logic(self) -> None:
         """Tests the service logic"""
+        # TODO: Me gustaría comprobar que la respuesta tenga la estructura adecuada, pero para ello se necesitaría
+        #  mockear los registros de base de datos que acepta el método service_logic. ¿Debería hacerse así o
+        #  directamente no se testea nada?
         pass

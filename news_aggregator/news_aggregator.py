@@ -19,6 +19,7 @@ from tornado.web import RequestHandler, Application, HTTPError
 from tornado.escape import json_encode
 
 from api.signup import SignUpProcessor
+from api.users import UsersProcessor
 
 
 class BaseRequestHandler(RequestHandler):
@@ -55,7 +56,11 @@ class UsersHandler(BaseRequestHandler):
 
     def get(self, user_id: int):
         """User data: Personal information, subscriptions and interests"""
-        self.write(f"USERS -> GET ({user_id})")
+        processor = UsersProcessor()
+        status_code, service_response = processor.user_data(self.request)
+
+        self.set_status(status_code)
+        self.write(json_encode(service_response))
 
     def put(self, user_id: int):
         """User data modification"""

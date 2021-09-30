@@ -11,8 +11,9 @@ TODO: ¿Incluir más información sobre el error (número de caracteres o mayús
 import re
 import string
 
+from const.data import MAX_INT_VALUE, MIN_INT_VALUE
 from exception.validation import IncorrectFormat, InsufficientLength, NotEnoughCapitalLetters, \
-    NotEnoughSpecialCharacters, MaxLengthExceeded
+    NotEnoughSpecialCharacters, MaxLengthExceeded, IntegerTooLarge, IntegerTooSmall
 
 
 def is_valid_email(email: str) -> None:
@@ -48,3 +49,19 @@ def contains_special_characters(test_string: str, min_special_characters: int = 
 
     if not isinstance(test_string, str) or password_special_characters < min_special_characters:
         raise NotEnoughSpecialCharacters()
+
+
+def is_integer_too_large(integer_value: int) -> None:
+    """Checks if the integer value is too large to be supported"""
+
+    # MAX_INT_VALUE is not supported either.
+    if integer_value >= MAX_INT_VALUE:
+        raise IntegerTooLarge()
+
+
+def is_integer_too_small(integer_value: int) -> None:
+    """Checks if the integer value is too small to be supported"""
+
+    # MIN_INT_VALUE is not supported either.
+    if integer_value <= MIN_INT_VALUE:
+        raise IntegerTooSmall()

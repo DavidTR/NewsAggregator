@@ -88,3 +88,26 @@ class ParametersNotSet(ValidationException):
     def __init__(self, *args, **kwargs):
         super(ValidationException, self).__init__(*args, **kwargs)
         self._http_status_code = 400
+
+
+class IntegerTooLarge(ValidationException):
+    """This exception will be risen if an integer reaches a maximum value"""
+    exception_code = "VAL-INT-TOO-LARGE"
+
+    _default_error_message = "The integer value is too large"
+
+    def __init__(self, *args, **kwargs):
+        super(ValidationException, self).__init__(*args, **kwargs)
+        self._http_status_code = 400
+
+
+class IntegerTooSmall(ValidationException):
+    """This exception will be risen if an integer reaches a maximum value"""
+    exception_code = "VAL-INT-TOO-SMALL"
+
+    _default_error_message = "The integer value is too small"
+
+    def __init__(self, *args, **kwargs):
+        super(ValidationException, self).__init__(*args, **kwargs)
+        self._http_status_code = 400
+
