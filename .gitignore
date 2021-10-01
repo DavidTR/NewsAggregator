@@ -133,3 +133,6 @@ news_aggregator/.idea/*
 
 # Configuration secrets
 news_aggregator/cfg/.secrets.toml
+
+# Log files
+news_aggregator/logs/*
