@@ -12,6 +12,7 @@ from typing import Any, TypeVar, Type
 
 from exception.base import BaseAppException
 from exception.validation import MissingField, InvalidType
+from util.logging import AppLogger
 
 
 class BaseService(abc.ABC):
@@ -65,6 +66,9 @@ class BaseService(abc.ABC):
         NOTE: If the service does not require any parameters, this structure must be an empty dictionary ({}).
         """
         self._service_parameters_constraints = None
+
+        # Easier access to the logger for internal use of all service classes.
+        self._logger = AppLogger().logger
 
     def set_parameters(self, service_parameters: dict) -> None:
         """

@@ -2,6 +2,7 @@
 import datetime
 import json
 import string
+from pathlib import Path
 
 import bcrypt
 import feedparser
@@ -122,6 +123,18 @@ def signup_stuff() -> None:
     signup.execute()
 
 
+def logging_stuff() -> None:
+    logging_filename = Path(f'{Path.cwd()}/../logs/news_aggregator.log')
+    print(logging_filename)
+
+    log_record = '{"password": "PASSWORD123456", "name": "3jns,", "ip": "12896k.123.12.4.12.4"}'
+
+    from util.logging import AppLogger
+    AppLogger().logger.info("TEST  ^?¿¡'123-.-.;^$·%$!/€@ł€@łßðæßß“ł€ħ”€@¶ħðđħ↓←ŧ€↓ðđħ¶↓¶ŋn")
+
+    print(log_record)
+
+
 if __name__ == '__main__':
     # feedparser_stuff()
     # mysql_stuff()
@@ -129,4 +142,5 @@ if __name__ == '__main__':
     # string_stuff("A2BF/?!;:cdefgh")
     # sqlalchemy_stuff()
     # bcrypt_stuff()
-    signup_stuff()
+    # signup_stuff()
+    logging_stuff()

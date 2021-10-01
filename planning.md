@@ -44,7 +44,7 @@ Estas características serán incorporadas a todas las versiones:
 
 ## Versión 0.2
 
-* Sistema de logging a fichero con rotación semanal (por ahora).
+* Sistema de logging a fichero con rotación diaria.
 * Servicios y API incluidos:
     * Baja de cuenta de usuario (lógica).
     * Modificación de suscripciones RSS de usuarios.

@@ -1,3 +1,5 @@
+<span style="background-color:blue;font-size:20px;">Se dejará de usar este enfoque de casos de uso por restricciones de tiempo</span>
+
 # Casos de uso
 
 Un caso de uso es una herramienta de diseño de software que refleja los diferentes flujos y resultados de ejecución de los recursos del sistema. Esto permitirá que el equipo de desarrollo y el equipo de producto o comercial se entiendan entre sí, al describir el sistema en un lenguaje que ambas partes entienden.
@@ -7,8 +9,6 @@ La idea es describir todos los comportamientos de cada recurso a alto nivel para
 Para el caso que nos ocupa, me quedaré sólo en esta fase (casos de uso), pues este proyecto no tiene como objetivo principal el trabajar estas técnicas de diseño de software, si no usarlas para desarrollar un sistema completo.
 
 Ver: https://www.utm.mx/~caff/doc/OpenUPWeb/openup/guidances/guidelines/detail_ucs_and_scenarios_6BC56BB7.html
-
-<span style="background-color:yellow;font-size:50px;">TODO</span>
 
 Listado de todas las interacciones posibles entre el sistema y los actores, desglosadas en pasos. Este listado se usará para implementar los servicios necesarios en el sistema.
 

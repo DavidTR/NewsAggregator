@@ -17,12 +17,17 @@ from tornado.httputil import HTTPServerRequest
 from exception.api import MissingQueryStringArguments, MissingBodyArguments, BaseAPIException, UnableToParseArguments
 from exception.base import BaseAppException
 from logic.base import ServiceClassType
+from util.logging import AppLogger
 
 
 class APIRequestProcessor:
 
-    @staticmethod
-    def _fetch_arguments(request: HTTPServerRequest, are_querystring_args_required: bool = False,
+    def __init__(self):
+        """Initializes an instance of this class"""
+        # Easier access to the logger for internal use of all API processor classes.
+        self._logger = AppLogger().logger
+
+    def _fetch_arguments(self, request: HTTPServerRequest, are_querystring_args_required: bool = False,
                          are_body_args_required: bool = False) -> dict:
         """
         Fetches the arguments depending on where to get them (querystring or body). Each API service will indicate
@@ -50,7 +55,7 @@ class APIRequestProcessor:
         except Exception as args_parse_exception:
             # This Exception broad except block is permitted by PEP8 as long as the exception data is logged.
             # See: https://pep8.org/#programming-recommendations
-            # TODO: Log de la excepción.
+            self._logger.exception("An error occurred while loading the request arguments")
             raise UnableToParseArguments()
 
         return args
@@ -77,11 +82,16 @@ class APIRequestProcessor:
         except BaseAppException as exception:
             # Deal with API and business logic errors. For now their managed in the same way, there is no need to
             # duplicate code.
+            self._logger.exception(f"An expected error has occurred while executing the service "
+                                   f"{service_class.__name__}")
+
             service_response["error"] = {
                 "code": exception.exception_code,
                 "message": exception.error_message
             }
 
+            # Depending on the error, a specific HTTP status code will be returned, so as to be as informative to the
+            # user as possible.
             status_code = exception.http_status_code
 
             recommendation_message = exception.recommendation_message

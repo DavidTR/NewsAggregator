@@ -20,9 +20,16 @@ from tornado.escape import json_encode
 
 from api.signup import SignUpProcessor
 from api.users import UsersProcessor
+from util.logging import AppLogger
 
 
 class BaseRequestHandler(RequestHandler):
+
+    def __init__(self, *args, **kwargs):
+        super(BaseRequestHandler, self).__init__(*args, **kwargs)
+
+        # Easier access to the logger for internal use of all handler classes.
+        self._logger = AppLogger().logger
 
     def set_default_headers(self):
         self.set_header("Content-Type", 'application/json')
