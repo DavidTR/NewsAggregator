@@ -6,8 +6,6 @@ Signup service class.
 
 """
 
-from typing import Any
-
 from sqlalchemy import select, insert
 
 from db.connection import database_engine
@@ -85,6 +83,9 @@ class SignUp(BaseService):
                 "is_optional": False
             }
         }
+
+    def prepare(self) -> None:
+        pass
 
     def preliminary_checks(self) -> None:
 

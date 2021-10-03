@@ -17,3 +17,17 @@ class EmailAlreadyInUse(BaseAppException):
     exception_code = "U-EMAIL-IN-USE"
 
     _default_error_message = "The email is already registered in the system. Did you forget your password?"
+
+
+# TODO: Incluir una comprobación transversal en cualquier procesador para que compruebe esta condición antes de consumir
+#  cualquier recurso.
+class UserAccountDeactivated(BaseAppException):
+    exception_code = "U-ACC-DEACT"
+
+    _default_error_message = "The account of the given user is deactivated. Activate it first to operate"
+
+
+class UserAlreadySubscribed(BaseAppException):
+    exception_code = "U-ALREADY-SUB"
+
+    _default_error_message = "The user is already subscribed to the provided RSS feed"

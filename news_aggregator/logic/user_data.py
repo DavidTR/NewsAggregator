@@ -36,7 +36,7 @@ class UserData(BaseService):
             }
         }
 
-    def prepare(self) -> Tuple[dict, dict]:
+    def prepare(self) -> None:
         # TODO: Por Dios, implementar esto con relationships para que no sea necesario hacer tantas peticiones...
         #  Habrá que agregar relationships en users y en rss_feeds, para que subscriptions tenga acceso a los datos de
         #  usuarios y de los feeds de forma automática
@@ -46,10 +46,10 @@ class UserData(BaseService):
                 .where(Users.id == self._service_parameters["user_id"])
             user_data = database_connection.execute(user_data_query).first()
 
-            # If there's no user data (e.g., the user does not exist), the process is aborted. This exception should
-            # never be raised, as the previous login should have checked this condition.
-            if not user_data:
-                raise UserNotFound()
+            # TODO: ¿Haría falta una comprobación por si los datos de usuario no se encontraran o esto ya lo cubre el
+            #  login?. Creo que es así, login ya cubriría:
+            #   - Existencia de registro de usuario.
+            #   - Estado activo de la cuenta.
 
             subscriptions_data_query = select(Users.id, RSSFeeds.title, RSSFeeds.url).join(Subscriptions,
                                                                                            Subscriptions.user_id == Users.id).join(
@@ -57,13 +57,17 @@ class UserData(BaseService):
 
             subscriptions_data = database_connection.execute(subscriptions_data_query).all()
 
-        return user_data, subscriptions_data
+        # TODO: Encontrar mejor manera de pasar datos entre métodos internos, por parámetro no es lo adecuado.
+        self.TODOdata = user_data, subscriptions_data
 
-    def preliminary_checks(self, *args) -> Any:
+        return
+
+    def preliminary_checks(self) -> Any:
         # No preliminary checks needed.
         pass
 
-    def service_logic(self, user_data, subscriptions_data) -> dict:
+    def service_logic(self) -> dict:
+        user_data, subscriptions_data = self.TODOdata
 
         # Prepare the data and give it a specific format for the response.
         result = {
@@ -82,9 +86,4 @@ class UserData(BaseService):
         return result
 
 
-if __name__ == '__main__':
-    instance = UserData()
-    instance.set_parameters({"user_id": 3})
-    instance.validate_parameters()
-    service_data = instance.prepare()
-    print(instance.service_logic(*service_data))
+

@@ -35,6 +35,9 @@ class APIRequestProcessor:
         for example.
 
         TODO: Agregar soporte para ficheros.
+        TODO: Limitar los parámetros reconocidos por servicio. Es decir, utilizar la lista
+         _service_parameters_constraints para capturar únicamente los parámetros esperados, teniendo en cuenta
+         si es o no opcional y su tipo. En definitiva, pasar toda la lógica de gestión de parámetros aquí.
         """
         # The arguments will be returned in a dictionary.
         args = {}
@@ -60,7 +63,7 @@ class APIRequestProcessor:
 
         return args
 
-    def process_request(self, request: HTTPServerRequest, service_class: ServiceClassType,
+    def process_request(self, request: HTTPServerRequest, service_class: ServiceClassType, url_parameters: dict = None,
                         are_querystring_args_required: bool = False,
                         are_body_args_required: bool = False) -> Tuple[int, dict]:
         """Processes a single request, executing the given service logic"""
@@ -72,6 +75,11 @@ class APIRequestProcessor:
         try:
             service_instance = service_class()
             service_parameters = self._fetch_arguments(request, are_querystring_args_required, are_body_args_required)
+
+            # URL arguments have more priority than QS or body arguments.
+            if url_parameters:
+                service_parameters.update(url_parameters)
+
             service_instance.set_parameters(service_parameters)
             service_instance.validate_parameters()
             service_response["data"] = service_instance.execute()

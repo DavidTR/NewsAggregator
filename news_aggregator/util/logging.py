@@ -26,7 +26,7 @@ from util.design_patterns import SingletonMetaclass
 class AppLogFilter(logging.Filter):
     """Filter that prevents the writing of user's sensible data in the log files"""
 
-    _record_fields_to_be_filtered = ["password", "passwd", "pwd", "ip"]
+    _record_fields_to_be_filtered = ["password", "passwd", "pwd"]
 
     def filter(self, record: LogRecord) -> bool:
         # The message will only be ignored by the filter if it does not contain any of the keywords contained in

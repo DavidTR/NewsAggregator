@@ -65,6 +65,8 @@ class BaseService(abc.ABC):
         
         NOTE: If the service does not require any parameters, this structure must be an empty dictionary ({}).
         """
+        # TODO: ¿Mover esta parte al API y que se hagan allí las validaciones?. Sería más lógico, pero no se podrían
+        #  testear en tests unitarios.
         self._service_parameters_constraints = None
 
         # Easier access to the logger for internal use of all service classes.
@@ -79,7 +81,7 @@ class BaseService(abc.ABC):
         self._service_parameters = copy.deepcopy(service_parameters)
 
     @abc.abstractmethod
-    def prepare(self) -> Any:
+    def prepare(self) -> None:
         """
         Loads the data needed by the service, over which business logic will be applied.
         :return Returns a dictionary that holds the required data for preliminary_checks and service_logic methods to
@@ -87,7 +89,7 @@ class BaseService(abc.ABC):
         """
         pass
 
-    def preliminary_checks(self, *args) -> None:
+    def preliminary_checks(self) -> None:
         """
         Performs preliminary checks, so it is safe to execute the business logic implemented in the method
         service_logic
@@ -95,7 +97,7 @@ class BaseService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def service_logic(self, *args) -> dict:
+    def service_logic(self) -> dict:
         """
         This method will contain the required logic for the service. Like so, logic and database access will be
         separated, as needed for unit tests. As this is the method that returns a response to the caller, this method
@@ -108,14 +110,17 @@ class BaseService(abc.ABC):
         """
         Default execution flow for every service. There are several hooks for the children classes to implement. If
         needed, this method can be overridden for a more customizable structure, depending on the service's nature
+
+        TODO: Revisar esta estructura, quizás sea necesario aplicar lógica de servicio después de guardar en base de
+         datos, por ejemplo. Hay que hacerlo más flexible -> ¿Introducir más hooks? -> post_save_to_database.
         """
-        service_preliminary_data = self.prepare()
+        self.prepare()
 
         # Hook for children classes.
-        self.preliminary_checks(*service_preliminary_data)
+        self.preliminary_checks()
 
         # This method will implement the main service logic, which must not rely on the database.
-        service_result = self.service_logic(*service_preliminary_data)
+        service_result = self.service_logic()
 
         # Hook for children classes.
         # TODO: ¿Agregar datos a la respuesta del servicio sobre este método?

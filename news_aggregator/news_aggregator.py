@@ -9,6 +9,8 @@ Execute python news_aggregator.py --help to the see the supported options.
 
 TODO: Agregar parámetros de login OAUTH a cada petición para securizarlas. Usar TLS. Usar data_received y streams,
  usar peticiones asíncronas.
+TODO: Mover el tratamiento de tipos de argumentos URL a los procesadores, que también se encargarán de validar los
+ tipos y formatos de parámetros. Así no será necesario hacer un casting aquí.
 """
 from typing import Optional, Awaitable, Any
 
@@ -28,7 +30,7 @@ class BaseRequestHandler(RequestHandler):
     def __init__(self, *args, **kwargs):
         super(BaseRequestHandler, self).__init__(*args, **kwargs)
 
-        # Easier access to the logger for internal use of all handler classes.
+        # Easier access to the logger for internal use of all handler classes.xbo
         self._logger = AppLogger().logger
 
     def set_default_headers(self):
@@ -61,10 +63,14 @@ class UsersHandler(BaseRequestHandler):
 
     SUPPORTED_METHODS = ("GET", "PUT", "DELETE")
 
+    def __init__(self, *args, **kwargs):
+        super(UsersHandler, self).__init__(*args, **kwargs)
+        self._processor = UsersProcessor()
+
     def get(self, user_id: int):
         """User data: Personal information, subscriptions and interests"""
-        processor = UsersProcessor()
-        status_code, service_response = processor.user_data(self.request)
+        status_code, service_response = self._processor.user_data(self.request,
+                                                                  url_parameters={"user_id": int(user_id)})
 
         self.set_status(status_code)
         self.write(json_encode(service_response))
@@ -88,7 +94,11 @@ class UsersHandler(BaseRequestHandler):
 
     def delete(self, user_id: int):
         """User account deactivation"""
-        self.write(f"USERS -> DELETE ({user_id})")
+        status_code, service_response = self._processor.account_deactivation(self.request,
+                                                                             url_parameters={"user_id": int(user_id)})
+
+        self.set_status(status_code)
+        self.write(json_encode(service_response))
 
 
 class LoginHandler(BaseRequestHandler):
