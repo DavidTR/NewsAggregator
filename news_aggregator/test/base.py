@@ -29,7 +29,7 @@ class TestBase(unittest.TestCase, metaclass=abc.ABCMeta):
         # This structure contains all the data required to test the type validity and format correctness of the
         # parameters. Each parameter will be substituted by an invalid type/format example so as to ensure that
         # the right exception is raised.
-        self._service_parameters_constraints = None
+        self._parameters_constraints = None
 
     @abc.abstractmethod
     def setUp(self) -> None:

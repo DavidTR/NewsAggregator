@@ -45,7 +45,7 @@ def mysql_stuff() -> None:
     # print(pyodbc.drivers())
     connection = pyodbc.connect(connection_string)
     cursor = connection.cursor()
-    print(cursor.execute("SELECT * FROM tags;").fetchall())
+    print(cursor.service_logic("SELECT * FROM tags;").fetchall())
 
 
 def timezone_stuff() -> None:
@@ -118,7 +118,7 @@ def signup_stuff() -> None:
     service_parameters = dict(name='Test 5', surname='Test Test', email='test5@test.com', password='TESTTEST;?:-')
     signup.set_parameters(service_parameters)
     signup.validate_parameters()
-    signup.execute()
+    signup.service_logic()
 
 
 def logging_stuff() -> None:

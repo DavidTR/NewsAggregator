@@ -9,21 +9,21 @@ import string
 
 from const.data import MIN_INT_VALUE, MAX_INT_VALUE
 from exception.validation import InvalidType, MissingField, IntegerTooLarge, IntegerTooSmall
-from logic.user_data import UserData
+from logic.user_data_listing import UserDataListing
 from test.base import TestBase
 
 
-class TestUserData(TestBase):
+class TestUserDataListing(TestBase):
 
     def setUp(self) -> None:
         """Setup procedure for the test"""
-        self._service_class = UserData
+        self._service_class = UserDataListing
 
         self._valid_parameters_test_values = {
             "user_id": 1
         }
 
-        self._service_parameters_constraints = {
+        self._parameters_constraints = {
             "user_id": {
                 "type": int,
                 "validations": [
@@ -49,7 +49,7 @@ class TestUserData(TestBase):
         # Generates random values for every available parameter. As this method is testing invalid types only,
         # each parameter will be validated against the service class with a random value of a different type,
         # simulating data of an invalid type provided by the user.
-        for parameter_name, parameter_data in self._service_parameters_constraints.items():
+        for parameter_name, parameter_data in self._parameters_constraints.items():
             for test_type in test_available_types:
                 if parameter_data["type"] != test_type:
                     if test_type == int:
@@ -92,7 +92,7 @@ class TestUserData(TestBase):
         service_instance = self._service_class()
 
         # TODO: Habría que añadir más variedad a este test.
-        for parameter_name, parameter_data in self._service_parameters_constraints.items():
+        for parameter_name, parameter_data in self._parameters_constraints.items():
             for validator_data in parameter_data["validations"]:
                 self._test_print(f"Testing the correctness of the argument {parameter_name} with the value "
                                  f"{validator_data['incorrect_parameter_value']}")
@@ -107,7 +107,7 @@ class TestUserData(TestBase):
         """Test to ensure that an invalid name or a missing parameter triggers the required exception"""
         service_instance = self._service_class()
 
-        for parameter_name, parameter_data in self._service_parameters_constraints.items():
+        for parameter_name, parameter_data in self._parameters_constraints.items():
 
             # If the parameter is optional, no exception will be raised if it's not set.
             if parameter_data["is_optional"]:

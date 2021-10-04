@@ -38,7 +38,7 @@ class BaseService(abc.ABC):
         super(BaseService, self).__init__(*args, **kwargs)
 
         # The service parameters, that will be loaded in the API.
-        self._service_parameters = None
+        self._parameters = None
 
         # This structure will help the validate_parameters when the parameters are validated. The idea is that
         # every service will declare their own parameter names, types and validators, so the method can perform the
@@ -67,66 +67,70 @@ class BaseService(abc.ABC):
         """
         # TODO: ¿Mover esta parte al API y que se hagan allí las validaciones?. Sería más lógico, pero no se podrían
         #  testear en tests unitarios.
-        self._service_parameters_constraints = None
+        self._parameters_constraints = None
 
         # Easier access to the logger for internal use of all service classes.
         self._logger = AppLogger().logger
+
+        # Internal data to be shared across internal methods.
+        self._internal_data = None
 
     def set_parameters(self, service_parameters: dict) -> None:
         """
         Class method that sets the service parameters and stores them for later use. The parameters will be used
         internally only, so no getter needs to be implemented
         """
-        # deepcopy creates a new object, so _service_parameters will be pointing to a newly created object in memory.
-        self._service_parameters = copy.deepcopy(service_parameters)
+        # deepcopy creates a new object, so parameters will be pointing to a newly created object in memory.
+        self._parameters = copy.deepcopy(service_parameters)
 
-    @abc.abstractmethod
-    def prepare(self) -> None:
-        """
-        Loads the data needed by the service, over which business logic will be applied.
-        :return Returns a dictionary that holds the required data for preliminary_checks and service_logic methods to
-        operate.
-        """
-        pass
-
-    def preliminary_checks(self) -> None:
-        """
-        Performs preliminary checks, so it is safe to execute the business logic implemented in the method
-        service_logic
-        """
-        pass
-
-    @abc.abstractmethod
     def service_logic(self) -> dict:
         """
-        This method will contain the required logic for the service. Like so, logic and database access will be
-        separated, as needed for unit tests. As this is the method that returns a response to the caller, this method
-        should be the one to implement the main logic of the service.
-        :return Must return a dictionary with the data to be returned to the caller.
+        Default execution flow for every service. There are several hooks for the children classes to implement. If
+        needed, this method can be overridden for a more customizable structure.
+        """
+        self._load_data()
+        self._preliminary_checks()
+        self._execute()
+        self._post_execute()
+
+        return self._build_response()
+
+    def _load_data(self) -> None:
+        """
+        Loads data required by the service logic. This method will be responsible of not leaving opened resources.
         """
         pass
 
-    def execute(self) -> dict:
+    def _preliminary_checks(self) -> None:
         """
-        Default execution flow for every service. There are several hooks for the children classes to implement. If
-        needed, this method can be overridden for a more customizable structure, depending on the service's nature
-
-        TODO: Revisar esta estructura, quizás sea necesario aplicar lógica de servicio después de guardar en base de
-         datos, por ejemplo. Hay que hacerlo más flexible -> ¿Introducir más hooks? -> post_save_to_database.
+        Performs preliminary checks, usually over the data loaded in the method _load_data. This method is responsible
+        of ensuring that the data is safe to be used in the following methods. For example, assuring that a data
+        retrieved from an external URL has the required content, or an email is not already registered (for a signup
+        or user data edit request).
         """
-        self.prepare()
+        pass
 
-        # Hook for children classes.
-        self.preliminary_checks()
+    def _execute(self) -> None:
+        """
+        Perform the main actions of the service.
+        """
+        pass
 
-        # This method will implement the main service logic, which must not rely on the database.
-        service_result = self.service_logic()
+    def _post_execute(self) -> None:
+        """
+        After executing the main instructions, extra actions can be performed here, like sending notifications, for
+        example.
+        """
+        pass
 
-        # Hook for children classes.
-        # TODO: ¿Agregar datos a la respuesta del servicio sobre este método?
-        self._save_to_database()
+    def _build_response(self) -> dict:
+        """Composes the response in a well-formed dictionary using the required data"""
+        pass
 
-        return service_result
+    @staticmethod
+    def _get_ok_response() -> dict:
+        """Returns a well-formed empty response"""
+        return {"data": {}, "error": {}}
 
     def validate_parameters(self) -> None:
         """
@@ -136,13 +140,13 @@ class BaseService(abc.ABC):
         Look before you leap style (https://docs.python.org/3/glossary.html#term-lbyl).
         """
         # The service parameters constraints dictionary must be filled (even if its with an empty dict).
-        if not self._service_parameters_constraints:
+        if not self._parameters_constraints:
             raise RuntimeError(f"The service class {self.__class__.__name__} has not declared the required parameter "
                                f"constraints")
 
         # If there are service parameters constraints and the parameters are not set, an error is raised, as the
         # programmer forgot about calling the set_parameters method.
-        if not self._service_parameters_constraints == {} and self._service_parameters is None:
+        if not self._parameters_constraints == {} and self._parameters is None:
             raise RuntimeError(f"The service class {self.__class__.__name__} has not set its parameters")
 
         self._check_parameters_provided()
@@ -151,8 +155,8 @@ class BaseService(abc.ABC):
 
     def _check_parameters_provided(self) -> None:
         """Checks if the required parameters have been provided"""
-        for parameter_name, parameter_constraint in self._service_parameters_constraints.items():
-            if parameter_name not in self._service_parameters.keys() and not parameter_constraint["is_optional"]:
+        for parameter_name, parameter_constraint in self._parameters_constraints.items():
+            if parameter_name not in self._parameters.keys() and not parameter_constraint["is_optional"]:
                 raise MissingField(error_message=f"The parameter {parameter_name} has not been provided")
 
     def _validate_parameters_type(self) -> None:
@@ -160,8 +164,8 @@ class BaseService(abc.ABC):
 
         try:
             # Check if the required parameters have been provided.
-            for parameter_name, parameter_constraint in self._service_parameters_constraints.items():
-                parameter_value = self._service_parameters[parameter_name]
+            for parameter_name, parameter_constraint in self._parameters_constraints.items():
+                parameter_value = self._parameters[parameter_name]
 
                 # TODO: Imprimir este mensaje para que el usuario de la API vea los tipos adecuadamente
                 #  (por ejemplo: <str> -> String). Según documentación a generar en Swagger.
@@ -176,8 +180,8 @@ class BaseService(abc.ABC):
     def _validate_parameters_format(self) -> None:
         """Validates the format of the service parameters"""
         # At this point, we are sure that the parameters are all present and they have the correct type.
-        for parameter_name, parameter_value in self._service_parameters.items():
-            parameter_validations = self._service_parameters_constraints[parameter_name]
+        for parameter_name, parameter_value in self._parameters.items():
+            parameter_validations = self._parameters_constraints[parameter_name]
 
             for parameter_validator in parameter_validations["validators"]:
                 validator_parameters = parameter_validator["parameters"]
@@ -186,13 +190,6 @@ class BaseService(abc.ABC):
                 # parameters.
                 validator_parameters[0] = parameter_value
                 parameter_validator["function"](*validator_parameters)
-
-    def _save_to_database(self, *args) -> Any:
-        """
-        Saves whichever changes the service requires to the database. If needed, this method must be invoked in
-        "execute"
-        """
-        pass
 
 
 ServiceClassType = Type[BaseService]

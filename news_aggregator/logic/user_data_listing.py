@@ -16,11 +16,11 @@ from logic.base import BaseService
 from util.validators import is_integer_too_small, is_integer_too_large
 
 
-class UserData(BaseService):
+class UserDataListing(BaseService):
 
     def __init__(self, *args, **kwargs):
-        super(UserData, self).__init__(*args, **kwargs)
-        self._service_parameters_constraints = {
+        super(UserDataListing, self).__init__(*args, **kwargs)
+        self._parameters_constraints = {
             "user_id": {
                 "type": int,
                 "validators": [
@@ -36,14 +36,14 @@ class UserData(BaseService):
             }
         }
 
-    def prepare(self) -> None:
+    def _load_data(self) -> None:
         # TODO: Por Dios, implementar esto con relationships para que no sea necesario hacer tantas peticiones...
         #  Habrá que agregar relationships en users y en rss_feeds, para que subscriptions tenga acceso a los datos de
         #  usuarios y de los feeds de forma automática
 
         with database_engine.connect() as database_connection:
             user_data_query = select(Users.id, Users.name, Users.surname, Users.email) \
-                .where(Users.id == self._service_parameters["user_id"])
+                .where(Users.id == self._parameters["user_id"])
             user_data = database_connection.execute(user_data_query).first()
 
             # TODO: ¿Haría falta una comprobación por si los datos de usuario no se encontraran o esto ya lo cubre el
@@ -51,25 +51,21 @@ class UserData(BaseService):
             #   - Existencia de registro de usuario.
             #   - Estado activo de la cuenta.
 
-            subscriptions_data_query = select(Users.id, RSSFeeds.title, RSSFeeds.url).join(Subscriptions,
-                                                                                           Subscriptions.user_id == Users.id).join(
-                RSSFeeds, RSSFeeds.id == Subscriptions.rss_feed_id).where(Subscriptions.user_id == user_data.id)
+            subscriptions_data_query = select(Users.id, RSSFeeds.title, RSSFeeds.url).\
+                join(Subscriptions, Subscriptions.user_id == Users.id).\
+                join(RSSFeeds, RSSFeeds.id == Subscriptions.rss_feed_id).where(Subscriptions.user_id == user_data.id)
 
             subscriptions_data = database_connection.execute(subscriptions_data_query).all()
 
         # TODO: Encontrar mejor manera de pasar datos entre métodos internos, por parámetro no es lo adecuado.
-        self.TODOdata = user_data, subscriptions_data
+        self._internal_data = {"user_data": user_data, "subscriptions_data": subscriptions_data}
 
-        return
-
-    def preliminary_checks(self) -> Any:
-        # No preliminary checks needed.
-        pass
-
-    def service_logic(self) -> dict:
-        user_data, subscriptions_data = self.TODOdata
+    def _build_response(self) -> dict:
 
         # Prepare the data and give it a specific format for the response.
+        user_data = self._internal_data["user_data"]
+        subscriptions_data = self._internal_data["subscriptions_data"]
+
         result = {
             "user_data": {
                 "name": user_data.name,
@@ -84,6 +80,3 @@ class UserData(BaseService):
                                        for subscription in subscriptions_data]
 
         return result
-
-
-

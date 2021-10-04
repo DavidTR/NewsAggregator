@@ -21,7 +21,7 @@ class SignUp(BaseService):
 
     def __init__(self, *args, **kwargs):
         super(SignUp, self).__init__(*args, **kwargs)
-        self._service_parameters_constraints = {
+        self._parameters_constraints = {
             "name": {
                 "type": str,
                 "validators": [
@@ -84,40 +84,36 @@ class SignUp(BaseService):
             }
         }
 
-    def prepare(self) -> None:
-        pass
+    def _load_data(self) -> None:
 
-    def preliminary_checks(self) -> None:
-
-        # Checks if the user identified by "email" already exists in the database
-        user_email = self._service_parameters["email"]
-
-        is_email_already_used_query = select(Users).where(Users.email == user_email)
+        user_record_query = select(Users).where(Users.email == self._parameters["email"])
 
         with database_engine.connect() as database_connection:
-            is_email_already_used = database_connection.execute(is_email_already_used_query).first()
-            if is_email_already_used:
-                raise EmailAlreadyInUse()
+            user_record = database_connection.execute(user_record_query).first()
 
-    def service_logic(self) -> dict:
+        self._internal_data["user_record"] = user_record
 
-        # This class does not have extra logic (YET)
-        # TODO: Enviar correos electrónicos o notificaciones.
-        pass
+    def _preliminary_checks(self) -> None:
 
-    def _save_to_database(self) -> None:
+        # Check if the email is already registered in the database.
+        user_record = self._internal_data["user_record"]
 
-        password = self._service_parameters["password"]
+        if user_record:
+            raise EmailAlreadyInUse()
+
+    def _execute(self) -> None:
+
+        password = self._parameters["password"]
         hashed_password = hash_password(password)
 
-        new_user_query = insert(Users).values(name=self._service_parameters["name"],
-                                              surname=self._service_parameters["surname"],
-                                              email=self._service_parameters["email"],
+        new_user_query = insert(Users).values(name=self._parameters["name"],
+                                              surname=self._parameters["surname"],
+                                              email=self._parameters["email"],
                                               password=hashed_password)
 
-        # TODO: Capturar esta excepción y mostrar un mensaje genérico, apuntarla en algún lado.
         # The methods "commit" and "rollback" are invoked automatically if context managers are used with engines or
-        # sessions. SQLAlchemy recommends this as a best practice:
+        # sessions.
+        # SQLAlchemy recommends context managers as a best practice:
         # https://docs.sqlalchemy.org/en/13/core/connections.html?highlight=dispose#using-transactions
         with database_engine.connect() as database_connection:
             database_connection.execute(new_user_query)

@@ -19,7 +19,7 @@ class AccountDeactivation(BaseService):
 
     def __init__(self, *args, **kwargs):
         super(AccountDeactivation, self).__init__(*args, **kwargs)
-        self._service_parameters_constraints = {
+        self._parameters_constraints = {
             "user_id": {
                 "type": int,
                 "validators": [
@@ -35,23 +35,35 @@ class AccountDeactivation(BaseService):
             }
         }
 
-    def prepare(self) -> None:
-        pass
+    def _load_data(self) -> None:
 
-    def preliminary_checks(self) -> Any:
         with database_engine.connect() as database_connection:
-            user_record_query = select(Users.is_active).where(Users.id == self._service_parameters["user_id"])
+            user_record_query = select(Users.is_active).where(Users.id == self._parameters["user_id"])
             user_record = database_connection.execute(user_record_query).first()
 
-            # TODO: ¿Haría falta una comprobación por si los datos de usuario no se encontraran o esto ya lo cubre el
-            #  login?. Creo que es así, login ya cubriría:
-            #   - Existencia de registro de usuario.
-            #   - Estado activo de la cuenta -> Un usuario desactivado podría seguir haciendo uso de su token por un
-            #   tiempo limitado tras desactivar su cuenta. O bien hacemos esta comprobación o invalidamos su token.
-        if not user_record.is_active:
+        self._internal_data = {"user_record": user_record}
+
+    def _preliminary_checks(self) -> None:
+
+        # TODO: ¿Haría falta una comprobación por si los datos de usuario no se encontraran o esto ya lo cubre el
+        #  login?. Creo que es así, login ya cubriría:
+        #   - Existencia de registro de usuario.
+        #   - Estado activo de la cuenta -> Un usuario desactivado podría seguir haciendo uso de su token por un
+        #   tiempo limitado tras desactivar su cuenta. O bien hacemos esta comprobación o invalidamos su token.
+
+        if not self._internal_data["user_record"].is_active:
             raise UserAccountDeactivated()
 
-    def service_logic(self) -> None:
+    def _execute(self) -> None:
+
+        # Effectively deactivate the account.
         with database_engine.connect() as database_connection:
-            user_update_query = update(Users).where(Users.id == self._service_parameters["user_id"]).values(is_active=False)
-            result = database_connection.execute(user_update_query)
+            user_update_query = update(Users).where(Users.id == self._parameters["user_id"]).values(is_active=False)
+            database_connection.execute(user_update_query)
+
+
+if __name__ == '__main__':
+    instance = AccountDeactivation()
+    instance.set_parameters({"user_id": 1})
+    instance.validate_parameters()
+    instance.service_logic()

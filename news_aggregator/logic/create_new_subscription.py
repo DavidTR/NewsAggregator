@@ -16,11 +16,11 @@ from logic.base import BaseService
 from util.validators import is_integer_too_large, is_integer_too_small
 
 
-class NewSubscription(BaseService):
+class CreateNewSubscription(BaseService):
 
     def __init__(self, *args, **kwargs):
-        super(NewSubscription, self).__init__(*args, **kwargs)
-        self._service_parameters_constraints = {
+        super(CreateNewSubscription, self).__init__(*args, **kwargs)
+        self._parameters_constraints = {
             "user_id": {
                 "type": int,
                 "validators": [
@@ -34,12 +34,7 @@ class NewSubscription(BaseService):
                     }],
                 "is_optional": False
             },
-            "rss_feed"
-            ""
-            ""
-            "ea"
-            "gñw"
-            "e+gñweg_id": {
+            "rss_feed_id": {
                 "type": int,
                 "validators": [
                     {
@@ -54,20 +49,18 @@ class NewSubscription(BaseService):
             }
         }
 
-    def prepare(self) -> None:
-        pass
+    def _execute(self) -> None:
 
-    def preliminary_checks(self) -> None:
         # Check if the RSS feed exists and if user is already subscribed to the RSS feed. This time an EAFP approach is
         # used, as the database constraints will forbid duplicates (https://docs.python.org/3/glossary.html#term-eafp).
-
         with database_engine.connect() as database_connection:
             try:
-                new_subscription_query = insert(Subscriptions).values(user_id=self._service_parameters["user_id"],
-                                                                      rss_feed_id=self._service_parameters["rss_feed_id"])
+                new_subscription_query = insert(Subscriptions).values(user_id=self._parameters["user_id"],
+                                                                      rss_feed_id=self._parameters["rss_feed_id"])
                 database_connection.execute(new_subscription_query)
 
             except IntegrityError as integrity_error:
+
                 # Access to the original DBAPI exception code. See site-packages/MySQLdb/constants/ER.py
                 internal_error_code = integrity_error.orig.args[0]
                 if internal_error_code == 1452:
@@ -77,15 +70,9 @@ class NewSubscription(BaseService):
                     self._logger.error(f"The user is already subscribed to the RSS feed: {integrity_error}")
                     raise UserAlreadySubscribed()
 
-    def service_logic(self) -> dict:
-        pass
-
-    def _save_to_database(self) -> None:
-        pass
-
 
 if __name__ == '__main__':
-    instance = NewSubscription()
+    instance = CreateNewSubscription()
     instance.set_parameters({"user_id": 1, "rss_feed_id": 1})
     instance.validate_parameters()
-    print(instance.execute())
+    print(instance.service_logic())

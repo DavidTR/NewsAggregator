@@ -36,7 +36,7 @@ class APIRequestProcessor:
 
         TODO: Agregar soporte para ficheros.
         TODO: Limitar los parámetros reconocidos por servicio. Es decir, utilizar la lista
-         _service_parameters_constraints para capturar únicamente los parámetros esperados, teniendo en cuenta
+         _parameters_constraints para capturar únicamente los parámetros esperados, teniendo en cuenta
          si es o no opcional y su tipo. En definitiva, pasar toda la lógica de gestión de parámetros aquí.
         """
         # The arguments will be returned in a dictionary.
@@ -82,7 +82,7 @@ class APIRequestProcessor:
 
             service_instance.set_parameters(service_parameters)
             service_instance.validate_parameters()
-            service_response["data"] = service_instance.execute()
+            service_response["data"] = service_instance.service_logic()
 
         # This order must be maintained: as all exceptions inherit from BaseAppException, except blocks capturing
         # exceptions from this class must be the lasts in every try block.
