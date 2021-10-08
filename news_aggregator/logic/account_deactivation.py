@@ -36,9 +36,9 @@ class AccountDeactivation(BaseService):
         }
 
     def _load_data(self) -> None:
+        user_record_query = select(Users.is_active).where(Users.id == self._parameters["user_id"])
 
         with database_engine.connect() as database_connection:
-            user_record_query = select(Users.is_active).where(Users.id == self._parameters["user_id"])
             user_record = database_connection.execute(user_record_query).first()
 
         self._internal_data = {"user_record": user_record}
@@ -55,10 +55,10 @@ class AccountDeactivation(BaseService):
             raise UserAccountDeactivated()
 
     def _execute(self) -> None:
+        user_update_query = update(Users).where(Users.id == self._parameters["user_id"]).values(is_active=False)
 
         # Effectively deactivate the account.
         with database_engine.connect() as database_connection:
-            user_update_query = update(Users).where(Users.id == self._parameters["user_id"]).values(is_active=False)
             database_connection.execute(user_update_query)
 
 

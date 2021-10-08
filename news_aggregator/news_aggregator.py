@@ -12,7 +12,7 @@ TODO: Agregar parámetros de login OAUTH a cada petición para securizarlas. Usa
 TODO: Mover el tratamiento de tipos de argumentos URL a los procesadores, que también se encargarán de validar los
  tipos y formatos de parámetros. Así no será necesario hacer un casting aquí.
 """
-from typing import Optional, Awaitable, Any
+from typing import Optional, Awaitable
 
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
@@ -21,6 +21,7 @@ from tornado.web import RequestHandler, Application, HTTPError
 from tornado.escape import json_encode
 
 from api.signup import SignUpProcessor
+from api.subscriptions import SubscriptionsProcessor
 from api.users import UsersProcessor
 from util.logging import AppLogger
 
@@ -125,29 +126,25 @@ class SubscriptionsHandler(BaseRequestHandler):
 
     SUPPORTED_METHODS = ("GET", "POST", "PATCH", "DELETE")
 
+    def __init__(self, *args, **kwargs):
+        super(SubscriptionsHandler, self).__init__(*args, **kwargs)
+        self._processor = SubscriptionsProcessor()
+
     def get(self, user_id: int):
         """Update subscriptions feeds"""
-        response = {
-            "message": "SUBSCRIPTIONS -> GET",
-            "params": {
-                "user_id": user_id,
-                "rss_feeds_ids": self.get_argument("rss_feeds_ids", default=None)
-            }
-        }
+        status_code, service_response = self._processor.reload_news(self.request,
+                                                                    url_parameters={"user_id": int(user_id)})
 
-        self.write(response)
+        self.set_status(status_code)
+        self.write(json_encode(service_response))
 
     def post(self, user_id: int):
         """Create a new subscription for the given user"""
-        response = {
-            "message": "SUBSCRIPTIONS -> POST",
-            "params": {
-                "user_id": user_id,
-                "rss_feed_id": self.get_body_argument('rss_feed_id')
-            }
-        }
+        status_code, service_response = self._processor.create_subscription(self.request,
+                                                                            url_parameters={"user_id": int(user_id)})
 
-        self.write(response)
+        self.set_status(status_code)
+        self.write(json_encode(service_response))
 
     def patch(self, user_id: int):
         """Order the subscriptions of a given user"""
@@ -163,15 +160,11 @@ class SubscriptionsHandler(BaseRequestHandler):
 
     def delete(self, user_id: int):
         """An user unsubscribes from a RSS feed"""
-        response = {
-            "message": "SUBSCRIPTIONS -> DELETE",
-            "params": {
-                "user_id": user_id,
-                "rss_feed_id_list": self.get_body_argument('rss_feed_id_list')
-            }
-        }
+        status_code, service_response = self._processor.delete_subscription(self.request,
+                                                                            url_parameters={"user_id": int(user_id)})
 
-        self.write(response)
+        self.set_status(status_code)
+        self.write(json_encode(service_response))
 
 
 class CatalogHandler(BaseRequestHandler):
@@ -196,7 +189,7 @@ def main():
             (r"/v01/users/?", SignUpHandler),
             (r"/v01/users/([0-9]+)/?", UsersHandler),
             (r"/v01/login/?", LoginHandler),
-            (r"/v01/subscriptions/([0-9]+)/?", SubscriptionsHandler),
+            (r"/v01/users/([0-9]+)/subscriptions/?", SubscriptionsHandler),
             (r"/v01/catalog/?", CatalogHandler)
         ]
 

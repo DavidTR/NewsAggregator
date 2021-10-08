@@ -88,7 +88,7 @@ class APIRequestProcessor:
         # exceptions from this class must be the lasts in every try block.
         # TODO: Esto cambiará en un futuro, actualizar comentario.
         except BaseAppException as exception:
-            # Deal with API and business logic errors. For now their managed in the same way, there is no need to
+            # Deal with API and business logic errors. For now they're managed in the same way, there is no need to
             # duplicate code.
             self._logger.exception(f"An expected error has occurred while executing the service "
                                    f"{service_class.__name__}")

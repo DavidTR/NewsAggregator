@@ -16,10 +16,10 @@ from logic.base import BaseService
 from util.validators import is_integer_too_large, is_integer_too_small
 
 
-class CreateNewSubscription(BaseService):
+class CreateSubscription(BaseService):
 
     def __init__(self, *args, **kwargs):
-        super(CreateNewSubscription, self).__init__(*args, **kwargs)
+        super(CreateSubscription, self).__init__(*args, **kwargs)
         self._parameters_constraints = {
             "user_id": {
                 "type": int,
@@ -50,13 +50,12 @@ class CreateNewSubscription(BaseService):
         }
 
     def _execute(self) -> None:
-
+        new_subscription_query = insert(Subscriptions).values(user_id=self._parameters["user_id"],
+                                                              rss_feed_id=self._parameters["rss_feed_id"])
         # Check if the RSS feed exists and if user is already subscribed to the RSS feed. This time an EAFP approach is
         # used, as the database constraints will forbid duplicates (https://docs.python.org/3/glossary.html#term-eafp).
         with database_engine.connect() as database_connection:
             try:
-                new_subscription_query = insert(Subscriptions).values(user_id=self._parameters["user_id"],
-                                                                      rss_feed_id=self._parameters["rss_feed_id"])
                 database_connection.execute(new_subscription_query)
 
             except IntegrityError as integrity_error:
@@ -72,7 +71,7 @@ class CreateNewSubscription(BaseService):
 
 
 if __name__ == '__main__':
-    instance = CreateNewSubscription()
+    instance = CreateSubscription()
     instance.set_parameters({"user_id": 1, "rss_feed_id": 1})
     instance.validate_parameters()
     print(instance.service_logic())

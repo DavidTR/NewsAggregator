@@ -22,12 +22,18 @@ class EmailAlreadyInUse(BaseAppException):
 # TODO: Incluir una comprobación transversal en cualquier procesador para que compruebe esta condición antes de consumir
 #  cualquier recurso.
 class UserAccountDeactivated(BaseAppException):
-    exception_code = "U-ACC-DEACT"
+    exception_code = "U-ACC-DEACTIVATED"
 
     _default_error_message = "The account of the given user is deactivated. Activate it first to operate"
 
 
 class UserAlreadySubscribed(BaseAppException):
-    exception_code = "U-ALREADY-SUB"
+    exception_code = "U-ALREADY-SUBSCRIBED"
 
     _default_error_message = "The user is already subscribed to the provided RSS feed"
+
+
+class UserHasNoSubscriptions(BaseAppException):
+    exception_code = "U-NO-SUBSCRIPTIONS"
+
+    _default_error_message = "The given user has no subscriptions"

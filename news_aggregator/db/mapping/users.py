@@ -8,17 +8,20 @@ Mapping classes for user-oriented tables. See db/mapping/__init__.py for more in
 import datetime
 
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
 
 from db.mapping import MappingBaseClass
 
 
+# TODO: Incluir campo para fecha de creación de suscripción.
 class Subscriptions(MappingBaseClass):
     """Users subscribed to RSS feeds"""
     __tablename__ = "subscriptions"
 
-    user_id = Column(Integer, ForeignKey("users.id", name="subscriptions_users_id_fk", ondelete="CASCADE"), primary_key=True)
-    rss_feed_id = Column(Integer, ForeignKey("rss_feeds.id", name="subscriptions_rss_feeds_id_fk", ondelete="CASCADE"), primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id", name="subscriptions_users_id_fk", ondelete="CASCADE"),
+                     primary_key=True)
+    rss_feed_id = Column(Integer, ForeignKey("rss_feeds.id", name="subscriptions_rss_feeds_id_fk", ondelete="CASCADE"),
+                         primary_key=True)
+    subscription_date = Column(DateTime, default=datetime.datetime.now())
 
 
 class Users(MappingBaseClass):

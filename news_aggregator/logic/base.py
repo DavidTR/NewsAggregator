@@ -125,7 +125,8 @@ class BaseService(abc.ABC):
 
     def _build_response(self) -> dict:
         """Composes the response in a well-formed dictionary using the required data"""
-        pass
+        # TODO: Estudiar formato adecuado para estandarizar la respuesta.
+        return {}
 
     @staticmethod
     def _get_ok_response() -> dict:

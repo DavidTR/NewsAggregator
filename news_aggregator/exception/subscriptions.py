@@ -7,8 +7,7 @@
 from exception.base import BaseAppException
 
 
-class RSSFeedDoesNotExist(BaseAppException):
-    exception_code = "RSS-DOES-NOT-EXIST"
+class SubscriptionDoesNotExist(BaseAppException):
+    exception_code = "SUBS-DOES-NOT-EXIST"
 
-    _default_error_message = "The given RSS Feed does not exist"
-
+    _default_error_message = "The user is not subscribed to the given RSS feed"

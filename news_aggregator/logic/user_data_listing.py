@@ -11,7 +11,6 @@ from sqlalchemy.sql import select
 from db.connection import database_engine
 from db.mapping.rss_feeds import RSSFeeds
 from db.mapping.users import Users, Subscriptions
-from exception.users import UserNotFound
 from logic.base import BaseService
 from util.validators import is_integer_too_small, is_integer_too_large
 
@@ -40,16 +39,15 @@ class UserDataListing(BaseService):
         # TODO: Por Dios, implementar esto con relationships para que no sea necesario hacer tantas peticiones...
         #  Habrá que agregar relationships en users y en rss_feeds, para que subscriptions tenga acceso a los datos de
         #  usuarios y de los feeds de forma automática
+        user_data_query = select(Users.id, Users.name, Users.surname, Users.email) \
+            .where(Users.id == self._parameters["user_id"])
 
         with database_engine.connect() as database_connection:
-            user_data_query = select(Users.id, Users.name, Users.surname, Users.email) \
-                .where(Users.id == self._parameters["user_id"])
-            user_data = database_connection.execute(user_data_query).first()
-
             # TODO: ¿Haría falta una comprobación por si los datos de usuario no se encontraran o esto ya lo cubre el
             #  login?. Creo que es así, login ya cubriría:
             #   - Existencia de registro de usuario.
             #   - Estado activo de la cuenta.
+            user_data = database_connection.execute(user_data_query).first()
 
             subscriptions_data_query = select(Users.id, RSSFeeds.title, RSSFeeds.url).\
                 join(Subscriptions, Subscriptions.user_id == Users.id).\

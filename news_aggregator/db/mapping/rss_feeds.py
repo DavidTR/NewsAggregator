@@ -6,6 +6,7 @@ Mapping classes for rss feeds-oriented tables. See db/mapping/__init__.py for mo
 
 """
 from sqlalchemy import Column, Integer, String, DateTime, JSON, ForeignKeyConstraint, PrimaryKeyConstraint, ForeignKey
+from sqlalchemy.dialects.mysql import MEDIUMTEXT
 from sqlalchemy.orm import relationship
 
 from db.mapping import MappingBaseClass
@@ -23,7 +24,7 @@ class RSSFeedsNews(MappingBaseClass):
     id = Column(Integer, autoincrement=True, primary_key=True)
     rss_feed_id = Column(Integer, ForeignKey("rss_feeds.id", name="rss_feeds_news_rss_feeds_id_fk", ondelete="CASCADE"), nullable=False)
     query_date = Column(DateTime)
-    news_data = Column(JSON)
+    news_data = Column(MEDIUMTEXT)
 
 
 class RSSFeeds(MappingBaseClass):
@@ -33,7 +34,9 @@ class RSSFeeds(MappingBaseClass):
     id = Column(Integer, autoincrement=True, primary_key=True)
     url = Column(String(50), nullable=False, unique=True)
     title = Column(String(100))
+    last_update_date = Column(DateTime)
     news = relationship(RSSFeedsNews)
+
 
 
 class RSSFeedsTags(MappingBaseClass):
