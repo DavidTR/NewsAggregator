@@ -17,11 +17,11 @@ from logic.reload_news import ReloadNews
 class SubscriptionsProcessor(APIRequestProcessor):
 
     def create_subscription(self, request: HTTPServerRequest, url_parameters: dict) -> Tuple[int, dict]:
-        return self.process_request(request, CreateSubscription, are_body_args_required=True,
+        return self.process_request(request, CreateSubscription, are_body_args_allowed=True,
                                     url_parameters=url_parameters)
 
     def delete_subscription(self, request: HTTPServerRequest, url_parameters: dict) -> Tuple[int, dict]:
-        return self.process_request(request, DeleteSubscription, are_body_args_required=True,
+        return self.process_request(request, DeleteSubscription, are_body_args_allowed=True,
                                     url_parameters=url_parameters)
 
     def reload_news(self, request: HTTPServerRequest, url_parameters: dict) -> Tuple[int, dict]:

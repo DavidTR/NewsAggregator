@@ -8,15 +8,16 @@ TODO: Crear tutorial sobre cómo heredar de esta clase y cómo fijar los valores
 """
 import abc
 import copy
-from typing import Any, TypeVar, Type
+from typing import Type, Union
 
-from exception.base import BaseAppException
 from exception.validation import MissingField, InvalidType
 from util.logging import AppLogger
 
 
 class BaseService(abc.ABC):
     """
+    TODO: Documentar en README
+
     This class will have the required structure for all the service classes to inherit from. This will be the default
     service API for each application service.
 
@@ -48,7 +49,7 @@ class BaseService(abc.ABC):
         """
         # String that identifies the name (preferably the sames as the related API argument) of the parameter.
         PARAMETER_NAME: {
-            # Type of the parameter. Basic types like str, int, float are supported.
+            # Type of the parameter. Only basic types like str, int, float are supported.
             "type": PARAMETER_TYPE,
             "validators": [
                 {
@@ -77,11 +78,14 @@ class BaseService(abc.ABC):
 
     def set_parameters(self, service_parameters: dict) -> None:
         """
-        Class method that sets the service parameters and stores them for later use. The parameters will be used
-        internally only, so no getter needs to be implemented
+        Class method that sets the service parameters and stores them for later use. Extra parameters will be ignored.
         """
         # deepcopy creates a new object, so parameters will be pointing to a newly created object in memory.
         self._parameters = copy.deepcopy(service_parameters)
+
+        for parameter_name, parameter_value in service_parameters.items():
+            if parameter_name not in self._parameters_constraints.keys():
+                del self._parameters[parameter_name]
 
     def service_logic(self) -> dict:
         """
@@ -123,7 +127,7 @@ class BaseService(abc.ABC):
         """
         pass
 
-    def _build_response(self) -> dict:
+    def _build_response(self) -> Union[dict, list]:
         """Composes the response in a well-formed dictionary using the required data"""
         # TODO: Estudiar formato adecuado para estandarizar la respuesta.
         return {}
@@ -151,7 +155,7 @@ class BaseService(abc.ABC):
             raise RuntimeError(f"The service class {self.__class__.__name__} has not set its parameters")
 
         self._check_parameters_provided()
-        self._validate_parameters_type()
+        self._parse_parameters()
         self._validate_parameters_format()
 
     def _check_parameters_provided(self) -> None:
@@ -160,23 +164,25 @@ class BaseService(abc.ABC):
             if parameter_name not in self._parameters.keys() and not parameter_constraint["is_optional"]:
                 raise MissingField(error_message=f"The parameter {parameter_name} has not been provided")
 
-    def _validate_parameters_type(self) -> None:
-        """Validates the type of the service parameters"""
+    def _parse_parameters(self) -> None:
+        """Parses the parameters by checking their type and then casting them to the required data type"""
 
-        try:
-            # Check if the required parameters have been provided.
-            for parameter_name, parameter_constraint in self._parameters_constraints.items():
-                parameter_value = self._parameters[parameter_name]
+        # Check if the required parameters have been provided.
+        for parameter_name, parameter_constraint in self._parameters_constraints.items():
 
-                # TODO: Imprimir este mensaje para que el usuario de la API vea los tipos adecuadamente
-                #  (por ejemplo: <str> -> String). Según documentación a generar en Swagger.
-                if type(parameter_value) != parameter_constraint["type"]:
-                    raise InvalidType(error_message=f"The field {parameter_name} has an invalid type: "
-                                                    f"{type(parameter_value)}. "
-                                                    f"Expected type: {parameter_constraint['type']}")
-        except KeyError:
-            raise RuntimeError(f"The class {self.__class__.__name__} has declared an invalid parameter constraint "
-                               f"structure")
+            # The type won't be checked in an optional parameter that hasn't been provided.
+            if parameter_constraint["is_optional"] and parameter_name not in self._parameters:
+                continue
+
+            # TODO: Imprimir este mensaje para que el usuario de la API vea los tipos adecuadamente
+            #  (por ejemplo: <str> -> String). Según documentación a generar en Swagger.
+            # Parse the parameter and update it.
+            try:
+                self._parameters[parameter_name] = parameter_constraint["type"](self._parameters[parameter_name])
+            except (TypeError, ValueError):
+                raise InvalidType(error_message=f"The field {parameter_name} has an invalid type: "
+                                                f"{type(self._parameters[parameter_name])}. "
+                                                f"Expected type: {parameter_constraint['type']}")
 
     def _validate_parameters_format(self) -> None:
         """Validates the format of the service parameters"""

@@ -20,6 +20,7 @@ from tornado.options import define, parse_command_line, options
 from tornado.web import RequestHandler, Application, HTTPError
 from tornado.escape import json_encode
 
+from api.catalog import CatalogProcessor
 from api.signup import SignUpProcessor
 from api.subscriptions import SubscriptionsProcessor
 from api.users import UsersProcessor
@@ -171,15 +172,16 @@ class CatalogHandler(BaseRequestHandler):
 
     SUPPORTED_METHODS = ("GET",)
 
-    def get(self):
-        response = {
-            "message": "CATALOG -> GET",
-            "params": {
-                "tag_id": self.get_argument("tag_id", default=None)
-            }
-        }
+    def __init__(self, *args, **kwargs):
+        super(CatalogHandler, self).__init__(*args, **kwargs)
+        self._processor = CatalogProcessor()
 
-        self.write(response)
+    def get(self):
+        status_code, service_response = self._processor.get_rss_catalog(self.request)
+
+        self.set_status(status_code)
+        self.write(json_encode(service_response))
+
 
 
 def main():

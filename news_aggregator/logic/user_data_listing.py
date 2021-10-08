@@ -4,7 +4,7 @@
 ------------------------------------------------------------------------------------------------------------------------
 
 """
-from typing import Any, Tuple
+from typing import Any, Tuple, Union
 
 from sqlalchemy.sql import select
 
@@ -58,7 +58,7 @@ class UserDataListing(BaseService):
         # TODO: Encontrar mejor manera de pasar datos entre métodos internos, por parámetro no es lo adecuado.
         self._internal_data = {"user_data": user_data, "subscriptions_data": subscriptions_data}
 
-    def _build_response(self) -> dict:
+    def _build_response(self) -> Union[dict, list]:
 
         # Prepare the data and give it a specific format for the response.
         user_data = self._internal_data["user_data"]

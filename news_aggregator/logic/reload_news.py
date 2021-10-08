@@ -6,6 +6,7 @@
 """
 import time
 from datetime import datetime
+from typing import Union
 
 from sqlalchemy.sql import select
 from tornado.gen import multi
@@ -114,7 +115,7 @@ class ReloadNews(BaseService):
         # Update the database with the freshly fetched news.
         pass
 
-    def _build_response(self) -> dict:
+    def _build_response(self) -> Union[dict, list]:
         pass
 
 

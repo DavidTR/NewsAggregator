@@ -38,7 +38,6 @@ class RSSFeeds(MappingBaseClass):
     news = relationship(RSSFeedsNews)
 
 
-
 class RSSFeedsTags(MappingBaseClass):
     """
     Relationship between RSS sites and tags. Each RSS site may have more than one tag, giving information about the type

@@ -9,15 +9,17 @@ a subset of HTTP codes to deliver a meaningful response.
 
 See: https://softwareengineering.stackexchange.com/q/341732/402704
 """
+import urllib.parse
 from typing import Tuple
 
 from tornado import escape
 from tornado.httputil import HTTPServerRequest
 
-from exception.api import MissingQueryStringArguments, MissingBodyArguments, BaseAPIException, UnableToParseArguments
+from exception.api import UnableToParseArguments
 from exception.base import BaseAppException
 from logic.base import ServiceClassType
 from util.logging import AppLogger
+from util.util import fast_list_flattener
 
 
 class APIRequestProcessor:
@@ -27,8 +29,8 @@ class APIRequestProcessor:
         # Easier access to the logger for internal use of all API processor classes.
         self._logger = AppLogger().logger
 
-    def _fetch_arguments(self, request: HTTPServerRequest, are_querystring_args_required: bool = False,
-                         are_body_args_required: bool = False) -> dict:
+    def _fetch_arguments(self, request: HTTPServerRequest, are_querystring_args_allowed: bool = False,
+                         are_body_args_allowed: bool = False) -> dict:
         """
         Fetches the arguments depending on where to get them (querystring or body). Each API service will indicate
         the origin of its parameters, so as to not allow a querystring encoded argument list in a POST request,
@@ -44,28 +46,29 @@ class APIRequestProcessor:
 
         # Querystring and/or body arguments are loaded and parsed.
         try:
-            if are_querystring_args_required:
-                qs_args = escape.parse_qs_bytes(request.query)
-                if not qs_args:
-                    raise MissingQueryStringArguments()
+            if are_querystring_args_allowed:
+                qs_args = urllib.parse.parse_qs(request.query, encoding='utf-8')
+                # parse_qs (which is the same function the tornado escape.parse_qs_bytes uses internally) returns
+                # a list of values for every parameter (even if only one value is provided), only the last provided
+                # value will be chosen.
+                for name, value in qs_args.items():
+                    qs_args[name] = qs_args[name][-1]
                 args.update(qs_args)
 
-            if are_body_args_required:
+            if are_body_args_allowed:
                 body_args = escape.json_decode(request.body)
-                if not body_args:
-                    raise MissingBodyArguments()
                 args.update(body_args)
         except Exception as args_parse_exception:
             # This Exception broad except block is permitted by PEP8 as long as the exception data is logged.
             # See: https://pep8.org/#programming-recommendations
-            self._logger.exception("An error occurred while loading the request arguments")
+            self._logger.exception(f"An error occurred while loading the request arguments: {args_parse_exception}")
             raise UnableToParseArguments()
 
         return args
 
     def process_request(self, request: HTTPServerRequest, service_class: ServiceClassType, url_parameters: dict = None,
-                        are_querystring_args_required: bool = False,
-                        are_body_args_required: bool = False) -> Tuple[int, dict]:
+                        are_querystring_args_allowed: bool = False,
+                        are_body_args_allowed: bool = False) -> Tuple[int, dict]:
         """Processes a single request, executing the given service logic"""
         # By default, suppose that the request gets processed correctly.
         status_code = 200
@@ -74,7 +77,7 @@ class APIRequestProcessor:
 
         try:
             service_instance = service_class()
-            service_parameters = self._fetch_arguments(request, are_querystring_args_required, are_body_args_required)
+            service_parameters = self._fetch_arguments(request, are_querystring_args_allowed, are_body_args_allowed)
 
             # URL arguments have more priority than QS or body arguments.
             if url_parameters:

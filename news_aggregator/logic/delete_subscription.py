@@ -4,6 +4,7 @@
 ------------------------------------------------------------------------------------------------------------------------
 
 """
+from typing import Union
 
 from sqlalchemy.sql import delete, select
 
@@ -84,7 +85,7 @@ class DeleteSubscription(BaseService):
                 where(Subscriptions.rss_feed_id == self._parameters["rss_feed_id"])
             database_connection.execute(subscription_deletion_query)
 
-    def _build_response(self) -> dict:
+    def _build_response(self) -> Union[dict, list]:
         return {"message": "Subscription deleted successfully"}
 
 
