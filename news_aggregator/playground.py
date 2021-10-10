@@ -1,6 +1,10 @@
 # -*- encoding:utf-8 -*-
 import datetime
 import string
+import time
+import uuid
+from base64 import urlsafe_b64encode
+from math import trunc
 from string import ascii_uppercase
 
 import bcrypt
@@ -125,6 +129,18 @@ def logging_stuff() -> None:
     AppLogger().logger.info("TEST  ^?¿¡'123-.-.;^$·%$!/€@ł€@łßðæßß“ł€ħ”€@¶ħðđħ↓←ŧ€↓ðđħ¶↓¶ŋn")
 
 
+def sessions_stuff() -> None:
+    for i in range(1, 30):
+        user_id = 1
+        timestamp = trunc(time.time())
+        salt = f"{user_id}-{timestamp}"
+        random_uuid_hex = uuid.uuid4().hex
+        session_id1 = salt + random_uuid_hex
+        session_id = urlsafe_b64encode(session_id1.encode()).decode('utf-8')
+
+        print(session_id)
+
+
 if __name__ == '__main__':
     # feedparser_stuff()
     # mysql_stuff()
@@ -133,4 +149,5 @@ if __name__ == '__main__':
     # sqlalchemy_stuff()
     # bcrypt_stuff()
     # signup_stuff()
-    logging_stuff()
+    # logging_stuff()
+    sessions_stuff()

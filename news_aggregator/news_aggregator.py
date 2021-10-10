@@ -21,6 +21,7 @@ from tornado.web import RequestHandler, Application, HTTPError
 from tornado.escape import json_encode
 
 from api.catalog import CatalogProcessor
+from api.login import LogInProcessor
 from api.signup import SignUpProcessor
 from api.subscriptions import SubscriptionsProcessor
 from api.users import UsersProcessor
@@ -95,25 +96,20 @@ class UsersHandler(BaseRequestHandler):
 
 
 class LoginHandler(BaseRequestHandler):
+    # TODO: Añadir soporte para OAuth con Google: https://www.tornadoweb.org/en/stable/auth.html
 
     SUPPORTED_METHODS = ("POST",)
 
+    def __init__(self, *args, **kwargs):
+        super(LoginHandler, self).__init__(*args, **kwargs)
+        self._processor = LogInProcessor()
+
     def post(self):
         """Login request"""
-        # TODO: Añadir soporte para OAuth con Google: https://www.tornadoweb.org/en/stable/auth.html
+        status_code, service_response = self._processor.login(self.request)
 
-        if self.request.body_arguments:
-            response = {
-                "message": "LOGIN -> POST",
-                "params": {
-                    "email": self.get_body_argument('email'),
-                    "password": self.get_body_argument('password')
-                }
-            }
-
-            self.write(response)
-        else:
-            raise HTTPError(400)
+        self.set_status(status_code)
+        self.write(json_encode(service_response))
 
 
 class SubscriptionsHandler(BaseRequestHandler):

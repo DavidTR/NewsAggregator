@@ -91,7 +91,7 @@ class SignUp(BaseService):
         with database_engine.connect() as database_connection:
             user_record = database_connection.execute(user_record_query).first()
 
-        self._internal_data["user_record"] = user_record
+        self._internal_data = {"user_record": user_record}
 
     def _preliminary_checks(self) -> None:
 

@@ -47,3 +47,9 @@ class NoNewUserDataProvided(BaseAppException):
     def __init__(self, *args, **kwargs):
         super(NoNewUserDataProvided, self).__init__(*args, **kwargs)
         self._http_status_code = 400
+
+
+class IncorrectPassword(BaseAppException):
+    exception_code = "U-INCORRECT-PASSWORD"
+
+    _default_error_message = "The provided password is incorrect"
