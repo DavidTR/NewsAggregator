@@ -74,7 +74,7 @@ CREATE TABLE subscriptions (
     CONSTRAINT subscriptions_rss_feeds_id_fk FOREIGN KEY(rss_feed_id) REFERENCES rss_feeds(id) ON DELETE CASCADE
 ) COMMENT = 'Users subscribed to RSS feeds';
 
-/*
+
 -- sessions table
 -- OAuth and Stateless APIs will not use classic sessions to operate.
 CREATE TABLE sessions (
@@ -89,8 +89,8 @@ CREATE TABLE sessions (
     CONSTRAINT sessions_users_id_fk FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
     UNIQUE KEY(session_id),
     INDEX(user_id)
-) COMMENT = \'All the sessions that users create when they log-in will be stored here\';
-*/
+) COMMENT = 'All the sessions that users create when they log-in will be stored here';
+
 
 -- Test data (comment if not needed)
 -- Both passwords are the same: PaSsw?!-;ord

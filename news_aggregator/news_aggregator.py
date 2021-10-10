@@ -79,20 +79,11 @@ class UsersHandler(BaseRequestHandler):
 
     def put(self, user_id: int):
         """User data modification"""
+        status_code, service_response = self._processor.user_data_modification(self.request,
+                                                                               url_parameters={"user_id": int(user_id)})
 
-        if self.request.body_arguments:
-            response = {
-                "message": f"USERS -> PUT ({user_id})",
-                "params": {
-                    "name": self.get_body_argument('name', default=None),
-                    "surname": self.get_body_argument('surname', default=None),
-                    "email": self.get_body_argument('email', default=None)
-                }
-            }
-
-            self.write(response)
-        else:
-            raise HTTPError(400)
+        self.set_status(status_code)
+        self.write(json_encode(service_response))
 
     def delete(self, user_id: int):
         """User account deactivation"""
@@ -109,6 +100,8 @@ class LoginHandler(BaseRequestHandler):
 
     def post(self):
         """Login request"""
+        # TODO: Añadir soporte para OAuth con Google: https://www.tornadoweb.org/en/stable/auth.html
+
         if self.request.body_arguments:
             response = {
                 "message": "LOGIN -> POST",
@@ -133,6 +126,7 @@ class SubscriptionsHandler(BaseRequestHandler):
 
     def get(self, user_id: int):
         """Update subscriptions feeds"""
+        # TODO: Mejorar para que use coroutines y tome los datos de forma asíncrona. Por ahora no funciona.
         status_code, service_response = self._processor.reload_news(self.request,
                                                                     url_parameters={"user_id": int(user_id)})
 
@@ -149,6 +143,8 @@ class SubscriptionsHandler(BaseRequestHandler):
 
     def patch(self, user_id: int):
         """Order the subscriptions of a given user"""
+
+        # TODO
         response = {
             "message": "SUBSCRIPTIONS -> PATCH",
             "params": {
@@ -177,11 +173,11 @@ class CatalogHandler(BaseRequestHandler):
         self._processor = CatalogProcessor()
 
     def get(self):
+        """Get available RSS sites"""
         status_code, service_response = self._processor.get_rss_catalog(self.request)
 
         self.set_status(status_code)
         self.write(json_encode(service_response))
-
 
 
 def main():

@@ -4,7 +4,8 @@
 ------------------------------------------------------------------------------------------------------------------------
 Base class for all the services.
 
-TODO: Crear tutorial sobre cómo heredar de esta clase y cómo fijar los valores.
+TODO: Crear tutorial sobre cómo heredar de esta clase y cómo fijar los valores. Documentar en README.
+
 """
 import abc
 import copy
@@ -16,8 +17,6 @@ from util.logging import AppLogger
 
 class BaseService(abc.ABC):
     """
-    TODO: Documentar en README
-
     This class will have the required structure for all the service classes to inherit from. This will be the default
     service API for each application service.
 
@@ -83,6 +82,7 @@ class BaseService(abc.ABC):
         # deepcopy creates a new object, so parameters will be pointing to a newly created object in memory.
         self._parameters = copy.deepcopy(service_parameters)
 
+        # Delete the parameters that the service is not aware of.
         for parameter_name, parameter_value in service_parameters.items():
             if parameter_name not in self._parameters_constraints.keys():
                 del self._parameters[parameter_name]
@@ -92,12 +92,17 @@ class BaseService(abc.ABC):
         Default execution flow for every service. There are several hooks for the children classes to implement. If
         needed, this method can be overridden for a more customizable structure.
         """
+        self._parameters_preliminary_checks()
         self._load_data()
         self._preliminary_checks()
         self._execute()
         self._post_execute()
 
         return self._build_response()
+
+    def _parameters_preliminary_checks(self) -> None:
+        """Perform early checks in parameters. This will allow the service to abort execution if needed"""
+        pass
 
     def _load_data(self) -> None:
         """

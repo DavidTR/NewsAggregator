@@ -96,9 +96,7 @@ class SignUp(BaseService):
     def _preliminary_checks(self) -> None:
 
         # Check if the email is already registered in the database.
-        user_record = self._internal_data["user_record"]
-
-        if user_record:
+        if self._internal_data["user_record"]:
             raise EmailAlreadyInUse()
 
     def _execute(self) -> None:

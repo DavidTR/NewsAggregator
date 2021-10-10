@@ -10,7 +10,7 @@ from exception.base import BaseAppException
 class UserNotFound(BaseAppException):
     exception_code = "U-DATA-NOT-FOUND"
 
-    _default_error_message = "No user data found with the provided credentials"
+    _default_error_message = "No user data was found"
 
 
 class EmailAlreadyInUse(BaseAppException):
@@ -37,3 +37,13 @@ class UserHasNoSubscriptions(BaseAppException):
     exception_code = "U-NO-SUBSCRIPTIONS"
 
     _default_error_message = "The given user has no subscriptions"
+
+
+class NoNewUserDataProvided(BaseAppException):
+    exception_code = "U-NO-NEW-DATA-PROVIDED"
+
+    _default_error_message = "No new user data was provided"
+
+    def __init__(self, *args, **kwargs):
+        super(NoNewUserDataProvided, self).__init__(*args, **kwargs)
+        self._http_status_code = 400
