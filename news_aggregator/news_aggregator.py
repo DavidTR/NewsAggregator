@@ -12,22 +12,20 @@ TODO: Agregar parámetros de login OAUTH a cada petición para securizarlas. Usa
 TODO: Mover el tratamiento de tipos de argumentos URL a los procesadores, que también se encargarán de validar los
  tipos y formatos de parámetros. Así no será necesario hacer un casting aquí.
 """
-from select import select
 from typing import Optional, Awaitable
 
-from tornado.httpserver import HTTPServer
-from tornado.ioloop import IOLoop, PeriodicCallback
-from tornado.options import define, parse_command_line, options
-from tornado.web import RequestHandler, Application, HTTPError
 from tornado.escape import json_encode
+from tornado.httpserver import HTTPServer
+from tornado.ioloop import IOLoop
+from tornado.options import define, parse_command_line, options
+from tornado.web import RequestHandler, Application
 
 from api.catalog import CatalogProcessor
 from api.login import LogInProcessor
 from api.signup import SignUpProcessor
 from api.subscriptions import SubscriptionsProcessor
 from api.users import UsersProcessor
-from db.connection import database_async_engine
-from db.mapping.users import Sessions
+from periodic.session_expiration import async_session_expiration
 from util.logging import AppLogger
 
 
@@ -66,7 +64,6 @@ class SignUpHandler(BaseRequestHandler):
 
 
 class UsersHandler(BaseRequestHandler):
-
     SUPPORTED_METHODS = ("GET", "PUT", "DELETE")
 
     def __init__(self, *args, **kwargs):
@@ -116,7 +113,6 @@ class LoginHandler(BaseRequestHandler):
 
 
 class SubscriptionsHandler(BaseRequestHandler):
-
     SUPPORTED_METHODS = ("GET", "POST", "PATCH", "DELETE")
 
     def __init__(self, *args, **kwargs):
@@ -164,7 +160,6 @@ class SubscriptionsHandler(BaseRequestHandler):
 
 
 class CatalogHandler(BaseRequestHandler):
-
     SUPPORTED_METHODS = ("GET",)
 
     def __init__(self, *args, **kwargs):
@@ -179,29 +174,10 @@ class CatalogHandler(BaseRequestHandler):
         self.write(json_encode(service_response))
 
 
-def session_expiration_task():
-    """
-    This function implements a session expiration check: Each time it gets invoked, every alive session is closed if
-    it's alive time expires
-    """
-    async def asynchronous_database_fetch():
-
-        alive_sessions_query = select(Sessions.id, Sessions.closing_date, Sessions.expiration_date, Sessions.is_alive).\
-            where(Sessions.is_alive == True)
-
-        async with database_async_engine.connect() as database_async_connection:
-            alive_sessions = await database_async_connection.execute(alive_sessions_query).all()
-
-        for alive_session in alive_sessions:
-            print(alive_session.id, alive_session.is_alive, alive_session.expiration_date)
-
-    # TODO: No debería instanciarse en cada ejecución, solucionar.
-    AppLogger().logger.info(f"Session expiration task, result: {await asynchronous_database_fetch()}")
-
-
 def main():
     def make_handlers() -> list:
         """Creates the list of handlers for the tornado app"""
+
         handlers = [
             (r"/v01/users/?", SignUpHandler),
             (r"/v01/users/([0-9]+)/?", UsersHandler),
@@ -224,11 +200,14 @@ def main():
     app = Application(handlers=make_handlers())
     http_server = HTTPServer(app)
     http_server.listen(options.port)
-    IOLoop.instance().start()
+
+    ioloop = IOLoop.current()
 
     # Start the session expiration periodic task.
-    periodic_session_expiration = PeriodicCallback(session_expiration_task, callback_time=30000)
-    periodic_session_expiration.start()
+    ioloop.add_callback(async_session_expiration)
+
+    # Start the main loop, hence the web server.
+    ioloop.start()
 
 
 if __name__ == '__main__':

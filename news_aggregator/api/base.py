@@ -12,11 +12,15 @@ See: https://softwareengineering.stackexchange.com/q/341732/402704
 import urllib.parse
 from typing import Tuple
 
+from sqlalchemy import select
 from tornado import escape
 from tornado.httputil import HTTPServerRequest
 
+from db.connection import database_engine
+from db.mapping.users import Sessions
 from exception.api import UnableToParseArguments
 from exception.base import BaseAppException
+from exception.sessions import SessionDoesNotExist, SessionIsNotAlive
 from logic.base import ServiceClassType
 from util.logging import AppLogger
 from util.util import fast_list_flattener
@@ -76,8 +80,8 @@ class APIRequestProcessor:
         service_response = self._service_response()
 
         try:
-            service_instance = service_class()
             service_parameters = self._fetch_arguments(request, are_querystring_args_allowed, are_body_args_allowed)
+            service_instance = service_class()
 
             # URL arguments have more priority than QS or body arguments.
             if url_parameters:
@@ -85,6 +89,10 @@ class APIRequestProcessor:
 
             service_instance.set_parameters(service_parameters)
             service_instance.validate_parameters()
+
+            # There's no need for certain services to require a session ID (catalog for example), so this check can be
+            # ignored if needed.
+            service_instance.check_session()
             service_response["data"] = service_instance.service_logic()
 
         # This order must be maintained: as all exceptions inherit from BaseAppException, except blocks capturing

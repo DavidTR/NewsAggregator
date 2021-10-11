@@ -11,6 +11,11 @@ import abc
 import copy
 from typing import Type, Union
 
+from sqlalchemy import select
+
+from db.connection import database_engine
+from db.mapping.users import Sessions
+from exception.sessions import SessionDoesNotExist, SessionIsNotAlive
 from exception.validation import MissingField, InvalidType
 from util.logging import AppLogger
 
@@ -75,6 +80,11 @@ class BaseService(abc.ABC):
         # Internal data to be shared across internal methods.
         self._internal_data = None
 
+        # Flag that configures this class to check a session and user ID's validity, as it's required by the
+        # implementing class. Set to False by default.
+        # The requires_login class decorator sets this flag to True among other things, see it for more information.
+        self._check_session = False
+
     def set_parameters(self, service_parameters: dict) -> None:
         """
         Class method that sets the service parameters and stores them for later use. Extra parameters will be ignored.
@@ -86,6 +96,27 @@ class BaseService(abc.ABC):
         for parameter_name, parameter_value in service_parameters.items():
             if parameter_name not in self._parameters_constraints.keys():
                 del self._parameters[parameter_name]
+
+    def check_session(self) -> None:
+        """Checks if the given session ID matches an alive session"""
+
+        # TODO: No me gusta del todo dejar esta comprobación aquí y que todos los servicios la tengan, pero la
+        #  alternativa que se me ocurre es dejarla en la clase base del procesador, lo cual tampoco me parece
+        #  correcto. El dejar esto aquí aumentaría la cohesión sin incurrir en un aumento del acoplamiento con la
+        #  clase de procesador.
+        # TODO: Todos los servicios logados deberían incorporar session_id y user_id como parámetros. ¿decorator?.
+
+        if self._check_session:
+            session_query = select(Sessions.is_alive).where(Sessions.session_id == self._parameters["session_id"])
+
+            with database_engine.connect() as database_connection:
+                session = database_connection.execute(session_query).first()
+
+            if not session:
+                raise SessionDoesNotExist()
+
+            if not session.is_alive:
+                raise SessionIsNotAlive()
 
     def service_logic(self) -> dict:
         """

@@ -11,10 +11,12 @@ from db.connection import database_engine
 from db.mapping.users import Users
 from exception.users import UserNotFound, NoNewUserDataProvided
 from logic.base import BaseService
+from util.meta import requires_login
 from util.validators import is_integer_too_small, is_integer_too_large, has_minimum_length, surpasses_maximum_length, \
     is_valid_email
 
 
+@requires_login
 class UserDataModification(BaseService):
 
     def __init__(self, *args, **kwargs):

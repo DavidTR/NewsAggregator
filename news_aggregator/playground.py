@@ -13,11 +13,14 @@ import feedparser
 import pyodbc
 import pytz
 from sqlalchemy.sql import select, update
+from tornado import gen
+from tornado.ioloop import IOLoop
 
 from cfg import config
 from db.connection import database_engine, database_async_engine, AsynchronousSession
 from db.mapping.users import Users, Sessions
 from logic.signup import SignUp
+from periodic.session_expiration import async_session_expiration
 from util.logging import AppLogger
 
 """
@@ -142,34 +145,7 @@ def sessions_stuff() -> None:
 
 
 def sessions_expiration_stuff():
-    async def asynchronous_database_fetch():
-
-        alive_sessions_query = select(Sessions.id, Sessions.closing_date, Sessions.expiration_date, Sessions.is_alive). \
-            where(Sessions.is_alive == True)
-
-        async with database_async_engine.connect() as database_async_connection:
-            alive_sessions_corotuine = await database_async_connection.execute(alive_sessions_query)
-            alive_sessions = alive_sessions_corotuine.all()
-
-        expired_sessions_ids = []
-        for alive_session in alive_sessions:
-            print(alive_session.id, alive_session.is_alive, alive_session.expiration_date, datetime.datetime.now())
-            if alive_session.expiration_date <= datetime.datetime.now():
-                expired_sessions_ids.append(alive_session.id)
-
-        if expired_sessions_ids:
-            # https://docs.sqlalchemy.org/en/14/core/dml.html#sqlalchemy.sql.expression.Update
-            expire_sessions_query = update(Sessions).where(Sessions.id.in_(expired_sessions_ids)).values(is_alive=False).execution_options(synchronize_session="fetch")
-
-            async with AsynchronousSession() as session:
-                async with session.begin():
-                    result = await database_async_connection.execute(expire_sessions_query)
-
-            print(result)
-
-        await database_async_engine.dispose()
-
-    asyncio.run(asynchronous_database_fetch())
+    asyncio.run(async_session_expiration())
 
 
 if __name__ == '__main__':

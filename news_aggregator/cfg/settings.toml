@@ -4,10 +4,10 @@
 # These configuration values are set to match my local environment an personal tuning. In the future this file may
 # be .gitignored.
 
-# Needed to avoid the rewriting of these settings after parsing .secrets.toml
+# Needed to avoid the rewriting of these settings after parsing .secrets.toml.
 dynaconf_merge = true
 
-# Database connection
+# Database connection.
 [database_connection]
 
 # Only for ODBC connections.
@@ -21,3 +21,8 @@ database = "NewsAggregatorBackend"
 # Only for ODBC connections.
 charset = "utf8mb4"
 
+# Background session expiration task.
+[background_session_expiration]
+
+# Periodic session expiration task delay between calls (in seconds).
+task_delay = 60
