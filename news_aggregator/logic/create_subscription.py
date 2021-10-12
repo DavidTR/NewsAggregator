@@ -5,7 +5,7 @@
 
 """
 
-from sqlalchemy import insert
+from sqlalchemy import insert, select
 from sqlalchemy.exc import IntegrityError
 
 from db.connection import database_engine
@@ -51,9 +51,28 @@ class CreateSubscription(BaseService):
             }
         }
 
+    def _load_data(self) -> None:
+
+        user_subscriptions_query = select(Subscriptions.user_id, Subscriptions.rss_feed_id,
+                                          Subscriptions.subscription_order).\
+            where(Subscriptions.user_id == self._parameters["user_id"])
+
+        with database_engine.connect() as database_connection:
+            user_subscriptions = database_connection.execute(user_subscriptions_query).all()
+
+        self._internal_data = {"user_subscriptions": user_subscriptions}
+
     def _execute(self) -> None:
+
+        if self._internal_data["user_subscriptions"]:
+            subscription_order = max(
+                [subscription.subscription_order for subscription in self._internal_data["user_subscriptions"]]) + 1
+        else:
+            subscription_order = 1
+
         new_subscription_query = insert(Subscriptions).values(user_id=self._parameters["user_id"],
-                                                              rss_feed_id=self._parameters["rss_feed_id"])
+                                                              rss_feed_id=self._parameters["rss_feed_id"],
+                                                              subscription_order=subscription_order)
         # Check if the RSS feed exists and if user is already subscribed to the RSS feed. This time an EAFP approach is
         # used, as the database constraints will forbid duplicates (https://docs.python.org/3/glossary.html#term-eafp).
         with database_engine.connect() as database_connection:
@@ -65,11 +84,16 @@ class CreateSubscription(BaseService):
                 # Access to the original DBAPI exception code. See site-packages/MySQLdb/constants/ER.py
                 internal_error_code = integrity_error.orig.args[0]
                 if internal_error_code == 1452:
+                    # If a foreign key exception is captured, it must be because of the absence of the RSS feed ID
+                    # The user ID must represent an user record, as the user must have logged in before consuming this
+                    # resource.
                     self._logger.error(f"The RSS feed does not exist: {integrity_error}")
                     raise RSSFeedDoesNotExist()
                 elif internal_error_code == 1062:
                     self._logger.error(f"The user is already subscribed to the RSS feed: {integrity_error}")
                     raise UserAlreadySubscribed()
+                else:
+                    raise
 
 
 if __name__ == '__main__':

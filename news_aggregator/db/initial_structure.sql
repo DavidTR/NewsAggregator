@@ -68,6 +68,7 @@ CREATE TABLE rss_feeds_tags (
 CREATE TABLE subscriptions (
     user_id INT,
     rss_feed_id INT,
+    subscription_order INT NOT NULL,
     subscription_date DATETIME DEFAULT NOW(),
     PRIMARY KEY(user_id, rss_feed_id),
     CONSTRAINT subscriptions_users_id_fk FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
@@ -102,4 +103,4 @@ INSERT INTO rss_feeds_news(rss_feed_id, query_date, news_data) VALUES (1, NOW(),
 
 INSERT INTO tags(title, description) VALUES ('Economy', 'World-wide economic news'), ('Science', 'Latest articles from all disciplines of science'), ('Politics', 'Why would you want to know about this?');
 INSERT INTO rss_feeds_tags(rss_feed_id, tag_id) VALUES (1, 1), (1, 2), (2, 2);
-INSERT INTO subscriptions(user_id, rss_feed_id) VALUES (1, 1), (1, 2), (2, 2);
+INSERT INTO subscriptions(user_id, rss_feed_id, subscription_order) VALUES (1, 1, 1), (1, 2, 2), (2, 2, 1);

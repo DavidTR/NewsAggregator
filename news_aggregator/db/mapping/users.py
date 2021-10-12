@@ -21,6 +21,7 @@ class Subscriptions(MappingBaseClass):
                      primary_key=True)
     rss_feed_id = Column(Integer, ForeignKey("rss_feeds.id", name="subscriptions_rss_feeds_id_fk", ondelete="CASCADE"),
                          primary_key=True)
+    subscription_order = Column(Integer, nullable=False)
     subscription_date = Column(DateTime, default=datetime.datetime.now())
 
 
