@@ -25,4 +25,5 @@ class SubscriptionsProcessor(APIRequestProcessor):
                                     url_parameters=url_parameters)
 
     def reload_news(self, request: HTTPServerRequest, url_parameters: dict) -> Tuple[int, dict]:
-        return self.process_request(request, ReloadNews, url_parameters=url_parameters)
+        return self.process_request(request, ReloadNews, url_parameters=url_parameters,
+                                    are_querystring_args_allowed=True)

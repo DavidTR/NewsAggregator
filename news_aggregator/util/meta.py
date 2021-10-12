@@ -22,7 +22,7 @@ def requires_login(cls):
     def new_init(self, *args, **kwargs):
 
         # Call the original __init__ method, which populates _parameters_constraints, among other stuff.
-        original_init(*args, **kwargs)
+        original_init(self, *args, **kwargs)
 
         # Set this flag to True so cls checks the provided session.
         self._check_session = True

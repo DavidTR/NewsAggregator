@@ -11,6 +11,7 @@ TODO: Agregar parámetros de login OAUTH a cada petición para securizarlas. Usa
  usar peticiones asíncronas.
 TODO: Mover el tratamiento de tipos de argumentos URL a los procesadores, que también se encargarán de validar los
  tipos y formatos de parámetros. Así no será necesario hacer un casting aquí.
+TODO: Documentar usando :arg y :return, al menos en clases base. Así se explicará qué hace cada argumento.
 """
 from typing import Optional, Awaitable
 

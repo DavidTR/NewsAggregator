@@ -12,9 +12,11 @@ from db.connection import database_engine
 from db.mapping.users import Users
 from exception.users import UserAccountDeactivated
 from logic.base import BaseService
+from util.meta import requires_login
 from util.validators import is_integer_too_small, is_integer_too_large
 
 
+@requires_login
 class AccountDeactivation(BaseService):
 
     def __init__(self, *args, **kwargs):

@@ -20,3 +20,5 @@ LOGGING_MESSAGES_PATTERN = ""
 LOGGING_MIN_LEVEL = logging.DEBUG
 LOGGING_FILE_PATH = os.path.join(PROJECT_ROOT_PATH, "logs/news_aggregator.log")
 LOGGING_MESSAGE_FORMAT = "[%(asctime)s - %(filename)s:%(funcName)s:%(lineno)d - %(levelname)s] >> %(message)s"
+
+EXECUTION_MODES = {"dev": "DEVELOPMENT", "prod": "PRODUCTION"}

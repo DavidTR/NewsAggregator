@@ -14,9 +14,11 @@ from db.mapping.users import Subscriptions
 from exception.rss_feeds import RSSFeedDoesNotExist
 from exception.subscriptions import SubscriptionDoesNotExist
 from logic.base import BaseService
+from util.meta import requires_login
 from util.validators import is_integer_too_large, is_integer_too_small
 
 
+@requires_login
 class DeleteSubscription(BaseService):
 
     def __init__(self, *args, **kwargs):

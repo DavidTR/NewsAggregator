@@ -9,12 +9,15 @@ from typing import Union
 
 from sqlalchemy import select, insert
 
+from cfg import config
+from const.data import EXECUTION_MODES
 from db.connection import database_engine
 from db.mapping.users import Users, Sessions
 from exception.sessions import AliveSessionAlreadyExists
 from exception.users import UserNotFound, IncorrectPassword
 from logic.base import BaseService
 from util.security import create_session_id, check_password
+from util.util import get_session_expiration_delay
 from util.validators import has_minimum_length, is_valid_email, has_minimum_capital_letters, \
     contains_special_characters, surpasses_maximum_length
 
@@ -93,7 +96,7 @@ class LogIn(BaseService):
 
         user_id = self._internal_data["user_record"].id
 
-        session_expiration_date = datetime.datetime.now() + datetime.timedelta(minutes=5)
+        session_expiration_date = datetime.datetime.now() + datetime.timedelta(minutes=get_session_expiration_delay())
         session_id = create_session_id(user_id)
 
         new_session_query = insert(Sessions).values(user_id=user_id, session_id=session_id,

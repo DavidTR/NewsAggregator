@@ -12,18 +12,13 @@ See: https://softwareengineering.stackexchange.com/q/341732/402704
 import urllib.parse
 from typing import Tuple
 
-from sqlalchemy import select
 from tornado import escape
 from tornado.httputil import HTTPServerRequest
 
-from db.connection import database_engine
-from db.mapping.users import Sessions
 from exception.api import UnableToParseArguments
 from exception.base import BaseAppException
-from exception.sessions import SessionDoesNotExist, SessionIsNotAlive
 from logic.base import ServiceClassType
 from util.logging import AppLogger
-from util.util import fast_list_flattener
 
 
 class APIRequestProcessor:
@@ -53,8 +48,8 @@ class APIRequestProcessor:
             if are_querystring_args_allowed:
                 qs_args = urllib.parse.parse_qs(request.query, encoding='utf-8')
                 # parse_qs (which is the same function the tornado escape.parse_qs_bytes uses internally) returns
-                # a list of values for every parameter (even if only one value is provided), only the last provided
-                # value will be chosen.
+                # a list of values for every parameter (even if only one value is provided), only the last one
+                # will be chosen as the value of the given parameter.
                 for name, value in qs_args.items():
                     qs_args[name] = qs_args[name][-1]
                 args.update(qs_args)
@@ -113,6 +108,8 @@ class APIRequestProcessor:
             # user as possible.
             status_code = exception.http_status_code
 
+            # It's possible to give a tip to the user on how to fix the error before trying again. It's exception
+            # classes responsibility to give a recommendation.
             recommendation_message = exception.recommendation_message
             if recommendation_message:
                 service_response["error"]["recommendation"] = recommendation_message

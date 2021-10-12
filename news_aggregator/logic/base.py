@@ -107,7 +107,9 @@ class BaseService(abc.ABC):
         # TODO: Todos los servicios logados deberían incorporar session_id y user_id como parámetros. ¿decorator?.
 
         if self._check_session:
-            session_query = select(Sessions.is_alive).where(Sessions.session_id == self._parameters["session_id"])
+            session_query = select(Sessions.is_alive).\
+                where(Sessions.session_id == self._parameters["session_id"]).\
+                where(Sessions.user_id == self._parameters["user_id"])
 
             with database_engine.connect() as database_connection:
                 session = database_connection.execute(session_query).first()

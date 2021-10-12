@@ -17,12 +17,14 @@ from db.mapping.rss_feeds import RSSFeeds
 from db.mapping.users import Subscriptions
 from exception.users import UserHasNoSubscriptions
 from logic.base import BaseService
+from util.meta import requires_login
 from util.util import fast_list_flattener
 from util.validators import is_integer_too_large, is_integer_too_small
 
 # TODO: CONTINUAR
 
 
+@requires_login
 class ReloadNews(BaseService):
 
     def __init__(self, *args, **kwargs):

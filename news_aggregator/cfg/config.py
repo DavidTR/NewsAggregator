@@ -2,6 +2,8 @@ import os
 
 from dynaconf import Dynaconf
 
+from const.data import EXECUTION_MODES
+
 current_directory = os.path.dirname(os.path.realpath(__file__))
 
 settings = Dynaconf(
@@ -11,3 +13,6 @@ settings = Dynaconf(
 
 # `envvar_prefix` = export envvars with `export DYNACONF_FOO=bar`.
 # `settings_files` = Load these files in the order.
+
+# Check that the some settings have valid configuration values.
+assert settings.EXECUTION_MODE in EXECUTION_MODES.values()

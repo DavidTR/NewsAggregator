@@ -40,6 +40,7 @@ class GetRSSCatalog(BaseService):
 
     def _load_data(self) -> None:
 
+        # TODO: Peticiones asíncronas a la base de datos.
         rss_feeds_query = select(RSSFeeds).order_by(RSSFeeds.id)
 
         if "tag_id" in self._parameters:

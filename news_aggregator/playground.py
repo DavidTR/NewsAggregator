@@ -12,13 +12,11 @@ import bcrypt
 import feedparser
 import pyodbc
 import pytz
-from sqlalchemy.sql import select, update
-from tornado import gen
-from tornado.ioloop import IOLoop
+from sqlalchemy.sql import select
 
 from cfg import config
-from db.connection import database_engine, database_async_engine, AsynchronousSession
-from db.mapping.users import Users, Sessions
+from db.connection import database_engine
+from db.mapping.users import Users
 from logic.signup import SignUp
 from periodic.session_expiration import async_session_expiration
 from util.logging import AppLogger
@@ -144,7 +142,7 @@ def sessions_stuff() -> None:
         print(session_id)
 
 
-def sessions_expiration_stuff():
+def sessions_expiration_stuff() -> None:
     asyncio.run(async_session_expiration())
 
 

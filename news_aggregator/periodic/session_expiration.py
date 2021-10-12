@@ -69,5 +69,8 @@ async def async_session_expiration():
 
             AppLogger().logger.info(f"[{datetime.datetime.now()}] Periodic session expiration task done, updated "
                                     f"{result.rowcount} sessions")
+        else:
+            AppLogger().logger.info(f"[{datetime.datetime.now()}] Periodic session expiration task done, no sessions "
+                                    f"updated")
 
         await gen.sleep(task_config["task_delay"])
