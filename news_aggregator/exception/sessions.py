@@ -16,7 +16,7 @@ class AliveSessionAlreadyExists(BaseAppException):
 class SessionDoesNotExist(BaseAppException):
     exception_code = "S-DOES-NOT-EXIST"
 
-    _default_error_message = "The session does not exist"
+    _default_error_message = "The session does not exist or it does not belong to the given user"
 
 
 class SessionIsNotAlive(BaseAppException):

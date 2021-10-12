@@ -139,17 +139,11 @@ class SubscriptionsHandler(BaseRequestHandler):
 
     def patch(self, user_id: int):
         """Order the subscriptions of a given user"""
+        status_code, service_response = self._processor.reorder_subscriptions(self.request,
+                                                                              url_parameters={"user_id": int(user_id)})
 
-        # TODO
-        response = {
-            "message": "SUBSCRIPTIONS -> PATCH",
-            "params": {
-                "user_id": user_id,
-                "new_order": self.get_body_argument('new_order')
-            }
-        }
-
-        self.write(response)
+        self.set_status(status_code)
+        self.write(json_encode(service_response))
 
     def delete(self, user_id: int):
         """An user unsubscribes from a RSS feed"""

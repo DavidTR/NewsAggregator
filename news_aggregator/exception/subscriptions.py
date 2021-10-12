@@ -54,3 +54,12 @@ class InvalidOrderValueInNewOrderList(BaseAppException):
         self._http_status_code = 400
 
 
+class DuplicatedOrderValuesInNewOrderList(BaseAppException):
+    exception_code = "S-DUPLICATED-ORDER-VALUES-ORDER-LIST"
+
+    _default_error_message = "Duplicated new order values are not allowed, each RSS feed ID must have an unique " \
+                             "order value"
+
+    def __init__(self, *args, **kwargs):
+        super(DuplicatedOrderValuesInNewOrderList, self).__init__(*args, **kwargs)
+        self._http_status_code = 400
