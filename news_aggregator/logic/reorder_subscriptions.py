@@ -5,13 +5,14 @@
 TODO: Documentar: Recibe una lista que comprende el nuevo orden de todos y cada uno de los feeds RSS a los que está
  suscrito el usuario. No se aceptan ordenamientos parciales. No se aceptan valores de orden repetidos.
 """
+from collections import Counter
 
 from sqlalchemy import select, update
 
 from db.connection import database_engine, Session
 from db.mapping.users import Subscriptions
 from exception.subscriptions import NewOrderListIncorrectLength, MalformedNewOrderList, InvalidRSSFeedInNewOrderList, \
-    InvalidOrderValueInNewOrderList
+    InvalidOrderValueInNewOrderList, DuplicatedOrderValuesInNewOrderList
 from exception.users import UserHasNoSubscriptions
 from logic.base import BaseService
 from util.meta import requires_login
@@ -78,6 +79,12 @@ class ReorderSubscriptions(BaseService):
             if order_dict["new_order"] not in allowed_order_values:
                 raise InvalidOrderValueInNewOrderList(formatting_data={"allowed_order_values": allowed_order_values})
 
+        # If the user sets two or more RSS feeds to have the same order value, an exception is raised.
+        counted_orders = Counter([new_order["new_order"] for new_order in self._parameters["new_order"]])
+
+        if any([counted_order_number > 1 for counted_order_number in counted_orders.values()]):
+            raise DuplicatedOrderValuesInNewOrderList()
+
     def _execute(self) -> None:
 
         new_order = self._parameters["new_order"]
@@ -99,6 +106,7 @@ class ReorderSubscriptions(BaseService):
 
                 # Avoid executing the database query if it's not necessary.
                 if current_order == order["new_order"]:
+                    self._logger.debug(f"Ignored order update for RSS id {order['rss_feed_id']} for being unnecessary")
                     continue
 
                 subscription_order_update_query = update(Subscriptions).where(
