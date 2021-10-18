@@ -42,7 +42,7 @@ async def async_session_expiration():
     # Recommended way to set a periodic task with tornado.
     # See: https://buildmedia.readthedocs.org/media/pdf/tornado/latest/tornado.pdf, page 20.
     while True:
-        AppLogger().logger.info(f"[{datetime.datetime.now()}] Periodic session expiration task begins database fetches")
+        AppLogger().logger.info(f"[{datetime.datetime.now()}] Periodic session expiration task begins database fetch")
 
         alive_sessions_query = select(Sessions.id, Sessions.closing_date, Sessions.expiration_date, Sessions.is_alive).\
             where(Sessions.is_alive == True)
@@ -68,7 +68,7 @@ async def async_session_expiration():
                 await session.commit()
 
             AppLogger().logger.info(f"[{datetime.datetime.now()}] Periodic session expiration task done, updated "
-                                    f"{result.rowcount} sessions")
+                                    f"{result.rowcount} session(s)")
         else:
             AppLogger().logger.info(f"[{datetime.datetime.now()}] Periodic session expiration task done, no sessions "
                                     f"updated")

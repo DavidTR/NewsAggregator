@@ -18,11 +18,11 @@ from util.meta import requires_login
 from util.validators import is_integer_too_large, is_integer_too_small
 
 
-# @requires_login
-class OrderSubscriptions(BaseService):
+@requires_login
+class ReorderSubscriptions(BaseService):
 
     def __init__(self, *args, **kwargs):
-        super(OrderSubscriptions, self).__init__(*args, **kwargs)
+        super(ReorderSubscriptions, self).__init__(*args, **kwargs)
         self._parameters_constraints = {
             "user_id": {
                 "type": int,
@@ -65,20 +65,18 @@ class OrderSubscriptions(BaseService):
         if len(self._parameters["new_order"]) != len(user_subscriptions):
             raise NewOrderListIncorrectLength()
 
-        all_user_rss_ids = [subscription.rss_feed_id for subscription in user_subscriptions]
-        allowed_order_values = list(range(1, len(all_user_rss_ids) + 1))
+        user_rss_ids = [subscription.rss_feed_id for subscription in user_subscriptions]
+        allowed_order_values = list(range(1, len(user_rss_ids) + 1))
 
         for order_dict in self._parameters["new_order"]:
             if not isinstance(order_dict, dict) or order_dict.keys() != {"rss_feed_id", "new_order"}:
                 raise MalformedNewOrderList()
 
-            if order_dict["rss_feed_id"] not in all_user_rss_ids:
+            if order_dict["rss_feed_id"] not in user_rss_ids:
                 raise InvalidRSSFeedInNewOrderList()
 
             if order_dict["new_order"] not in allowed_order_values:
                 raise InvalidOrderValueInNewOrderList(formatting_data={"allowed_order_values": allowed_order_values})
-
-            if
 
     def _execute(self) -> None:
 
@@ -113,7 +111,8 @@ class OrderSubscriptions(BaseService):
 
 
 if __name__ == '__main__':
-    instance = OrderSubscriptions()
-    instance.set_parameters({"user_id": 1, "new_order": [{"new_order": 1, "rss_feed_id": 1}, {"rss_feed_id": 2, "new_order": 1}]})
+    instance = ReorderSubscriptions()
+    instance.set_parameters({"user_id": 1, "new_order": [{"new_order": 1, "rss_feed_id": 1},
+                                                         {"rss_feed_id": 2, "new_order": 1}]})
     instance.validate_parameters()
     print(instance.service_logic())

@@ -105,7 +105,9 @@ class UserDataModification(BaseService):
         # Update user data.
         user_data_update_query = update(Users).where(Users.id == self._parameters["user_id"])
 
-        new_user_name, new_user_surname, new_user_email = self._parameters.get('name'), self._parameters.get('surname'), self._parameters.get('email')
+        new_user_name = self._parameters.get('name')
+        new_user_surname = self._parameters.get('surname')
+        new_user_email = self._parameters.get('email')
 
         if new_user_name:
             user_data_update_query = user_data_update_query.values(name=new_user_name)

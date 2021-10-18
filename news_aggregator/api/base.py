@@ -114,6 +114,11 @@ class APIRequestProcessor:
             if recommendation_message:
                 service_response["error"]["recommendation"] = recommendation_message
 
+        except BaseException as uncaught_exception:
+            self._logger.critical(f"An uncaught error occurred: {uncaught_exception}. It will be raised again as an "
+                                  f"uncaught error")
+            raise
+
         return status_code, service_response
 
     @staticmethod

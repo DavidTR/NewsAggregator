@@ -16,12 +16,12 @@ from exception.validation import IncorrectFormat, InsufficientLength, NotEnoughC
     NotEnoughSpecialCharacters, MaxLengthExceeded, IntegerTooLarge, IntegerTooSmall
 
 
-def is_valid_email(email: str) -> None:
+def is_valid_email(test_email: str) -> None:
     """Checks if the given email is valid"""
     email_regex = re.compile(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$)")
 
     # "fullmatch" checks if the whole string matches the regular expression, better fit for this function than "match".
-    if not isinstance(email, str) or not email_regex.fullmatch(email):
+    if not isinstance(test_email, str) or not email_regex.fullmatch(test_email):
         raise IncorrectFormat(formatting_data={"name": "email"})
 
 
@@ -51,17 +51,22 @@ def contains_special_characters(test_string: str, min_special_characters: int = 
         raise NotEnoughSpecialCharacters()
 
 
-def is_integer_too_large(integer_value: int) -> None:
+def is_integer_too_large(test_integer: int) -> None:
     """Checks if the integer value is too large to be supported"""
 
-    # MAX_INT_VALUE is not supported either.
-    if integer_value >= MAX_INT_VALUE:
+    if test_integer > MAX_INT_VALUE:
         raise IntegerTooLarge()
 
 
-def is_integer_too_small(integer_value: int) -> None:
+def is_integer_too_small(test_integer: int) -> None:
     """Checks if the integer value is too small to be supported"""
 
-    # MIN_INT_VALUE is not supported either.
-    if integer_value <= MIN_INT_VALUE:
+    if test_integer < MIN_INT_VALUE:
         raise IntegerTooSmall()
+
+
+def elements_have_allowed_data_types(test_list: list, allowed_data_types: list) -> None:
+    """This validator ensures that the given list holds elements of allowed data types"""
+    for list_element in test_list:
+        if type(list_element) not in allowed_data_types:
+            raise

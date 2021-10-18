@@ -5,7 +5,7 @@
 Mapping classes for rss feeds-oriented tables. See db/mapping/__init__.py for more information.
 
 """
-from sqlalchemy import Column, Integer, String, DateTime, JSON, ForeignKeyConstraint, PrimaryKeyConstraint, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.dialects.mysql import MEDIUMTEXT
 from sqlalchemy.orm import relationship
 
@@ -22,7 +22,8 @@ class RSSFeedsNews(MappingBaseClass):
     __tablename__ = "rss_feeds_news"
 
     id = Column(Integer, autoincrement=True, primary_key=True)
-    rss_feed_id = Column(Integer, ForeignKey("rss_feeds.id", name="rss_feeds_news_rss_feeds_id_fk", ondelete="CASCADE"), nullable=False)
+    rss_feed_id = Column(Integer, ForeignKey("rss_feeds.id", name="rss_feeds_news_rss_feeds_id_fk", ondelete="CASCADE"),
+                         nullable=False)
     query_date = Column(DateTime)
     news_data = Column(MEDIUMTEXT)
 
@@ -45,5 +46,7 @@ class RSSFeedsTags(MappingBaseClass):
     """
     __tablename__ = "rss_feeds_tags"
 
-    rss_feed_id = Column(Integer, ForeignKey("rss_feeds.id", name="rss_feeds_tags_rss_feeds_id_fk", ondelete="CASCADE"), primary_key=True)
-    tag_id = Column(Integer, ForeignKey("tags.id", name="rss_feeds_tags_tags_id_fk", ondelete="CASCADE"), primary_key=True)
+    rss_feed_id = Column(Integer, ForeignKey("rss_feeds.id", name="rss_feeds_tags_rss_feeds_id_fk", ondelete="CASCADE"),
+                         primary_key=True)
+    tag_id = Column(Integer, ForeignKey("tags.id", name="rss_feeds_tags_tags_id_fk", ondelete="CASCADE"),
+                    primary_key=True)

@@ -111,3 +111,10 @@ class IntegerTooSmall(ValidationException):
         super(ValidationException, self).__init__(*args, **kwargs)
         self._http_status_code = 400
 
+
+class InvalidListMemberDataType(ValidationException):
+    exception_code = "VAL-INVALID-MEMBER-TYPE"
+
+    _default_error_message = "A member of the list has a not allowed data type. " \
+                             "Allowed data types: {allowed_data_types}"
+

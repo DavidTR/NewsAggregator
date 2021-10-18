@@ -77,9 +77,6 @@ class ReloadNews(BaseService):
         async def _labelled_rss_fetch(rss_feed):
             return rss_feed.id, await async_http_client.fetch(rss_feed.url)
 
-        # TODO: Las dos alternativas son las siguientes:
-        #  - labelled_rss_fetch + results[response[0]] = await response[1].text()
-        #  - task_list.append(async_http_requests_client.get(rss_feed.url)) + results[response.url] = await response.text()
         def _get_tasks() -> list:
             """Construct a list of coroutine tasks to fetch RSS news asynchronously"""
             task_list = []

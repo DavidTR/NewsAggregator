@@ -4,7 +4,6 @@
 ------------------------------------------------------------------------------------------------------------------------
 TODO: ¿Crear un nuevo archivo users.py y ubicar esta y otras clases de servicios relativos a usuarios ahí?.
 """
-from typing import Any
 
 from sqlalchemy import select, update
 
@@ -27,7 +26,7 @@ class AccountDeactivation(BaseService):
                 "validators": [
                     {
                         "function": is_integer_too_large,
-                        "parameters": ["PARAMETER_VALUE"]
+                        "parameters": ["PARAMETER_VALUE", ]
                     },
                     {
                         "function": is_integer_too_small,

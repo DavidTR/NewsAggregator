@@ -42,7 +42,7 @@ class BaseAppException(Exception):
         self._http_status_code = 409
 
         # Some exceptions can give a recommendation to the caller on how to fix an error on their side.
-        self._recommendation_message = None
+        self._recommendation_message = recommendation_message
 
     def __init_subclass__(cls, **kwargs) -> None:
         """Enforces the uniqueness of exception_code for every exception subclass"""

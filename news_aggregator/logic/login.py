@@ -9,8 +9,6 @@ from typing import Union
 
 from sqlalchemy import select, insert
 
-from cfg import config
-from const.data import EXECUTION_MODES
 from db.connection import database_engine
 from db.mapping.users import Users, Sessions
 from exception.sessions import AliveSessionAlreadyExists

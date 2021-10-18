@@ -44,7 +44,8 @@ class GetRSSCatalog(BaseService):
         rss_feeds_query = select(RSSFeeds).order_by(RSSFeeds.id)
 
         if "tag_id" in self._parameters:
-            tagged_rss_feeds_query = select(RSSFeedsTags.rss_feed_id).where(RSSFeedsTags.tag_id == self._parameters["tag_id"])
+            tagged_rss_feeds_query = select(RSSFeedsTags.rss_feed_id).\
+                where(RSSFeedsTags.tag_id == self._parameters["tag_id"])
 
             with database_engine.connect() as database_connection:
                 tagged_rss_feeds = database_connection.execute(tagged_rss_feeds_query).all()
