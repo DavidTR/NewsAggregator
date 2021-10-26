@@ -5,15 +5,17 @@
 
 """
 import time
+import concurrent.futures
 from datetime import datetime
 from typing import Union
 
+import requests
 from sqlalchemy.sql import select
 from tornado.gen import multi
 from tornado.httpclient import AsyncHTTPClient
 
 from db.connection import database_engine
-from db.mapping.rss_feeds import RSSFeeds
+from db.mapping.rss_feeds import RSSFeeds, RSSFeedsNews
 from db.mapping.users import Subscriptions
 from exception.users import UserHasNoSubscriptions
 from logic.base import BaseService
@@ -24,7 +26,7 @@ from util.validators import is_integer_too_large, is_integer_too_small
 # TODO: CONTINUAR
 
 
-@requires_login
+# @requires_login
 class ReloadNews(BaseService):
 
     def __init__(self, *args, **kwargs):
@@ -99,6 +101,48 @@ class ReloadNews(BaseService):
 
         return results
 
+    def _threaded_rss_news_fetch(self):
+
+        def sync_url_fetch(url_address: str, timeout):
+            return requests.get(url_address, timeout=timeout)
+
+        raw_rss_news = []
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as threaded_executor:
+
+            # First, prepare
+            # A dict comprehension won't be used for readability purposes.
+            rss_news_futures = {}
+            for rss_feed in self._internal_data["user_rss_feeds"]:
+
+                # List of URLs alongside their threaded futures, they will be resolved soon.
+                rss_news_futures[rss_feed.url] = threaded_executor.submit(sync_url_fetch, rss_feed.url, 60)
+
+            for future in concurrent.futures.as_completed(rss_news_futures.values()):
+                url = rss_news_futures[future]
+                self._logger.debug(f"Fetching URL {url}")
+
+                try:
+                    resolved_future = future.result()
+
+                    # Check if the remote call finished with a 200 status and if it has the data we need. If any of this
+                    # conditions is not satisfied, the RSS feed won't be updated and it will be ignored.
+                    if resolved_future.status_code != 200:
+                        
+
+                except Exception as resolve_exception:
+                    self._logger.error(f"An error occurred when resolving the future for the URL: "
+                                       f"{resolve_exception}. The RSS feed won't be updated")
+                    continue
+
+        self._internal_data["new_rss_news_xml"] = raw_rss_news
+
+    # Implementación con ThreadPoolExecutor. OK
+    # Implementación con multiprocessing.
+    # Implementación con hebras clásicas.
+    # https://stackoverflow.com/questionsx/2632520/what-is-the-fastest-way-to-send-100-000-http-requests-in-python#comment107423317_46144596
+    # Benchmarks para cada una de las soluciones, comparar cuál de ellas es la mejor.
+
     def _execute(self):
 
         # Use asyncio and uvloop for a more efficient way to fetch and store the data.
@@ -107,12 +151,16 @@ class ReloadNews(BaseService):
         start_time = time.time()
         # IOLoop.current().add_future(run_in_stack_context(NullContext(), self._fetch_rss_news),
         #                             lambda f: f.result())
-        self._internal_data["updated_rss_news"] = self._fetch_rss_news()
+        self._threaded_rss_news_fetch()
+        print(self._internal_data["new_rss_news_xml"])
         print(time.time() - start_time)
 
     def _post_execute(self) -> None:
         # Update the database with the freshly fetched news.
-        pass
+        with database_engine.connect() as database_connection:
+
+            for rss_new in self._internal_data["new_rss_news_xml"]:
+
 
     def _build_response(self) -> Union[dict, list]:
         pass

@@ -12,3 +12,17 @@ Linux Mint es compatible con Ubuntu 18.04, por lo que seleccionando ese sistema 
 
 1. Creción de un proyecto Django desde cero.
 
+* Se recomienda crear un entorno virtual (virtualenv) para instalar las dependencias del proyecto sin que queden ligadas al intérprete del sistema. Por ahora sólo será necesario instalar Django:
+
+```
+$ virtualenv -p python3 news_aggregator_frontend
+$ pip install Django
+```
+
+* Primero, hay que crear la estructura básica del proyecto. Se supone que el directorio actual es el elegido para ubicar los archivos de la aplicación:
+
+```
+$ django-admin startproject news_aggregator
+```
+
+

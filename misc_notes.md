@@ -13,6 +13,12 @@ GRANT ALL ON `NewsAggregatorBackend`.* TO 'news_aggregator'@'localhost';
 
 En este ejemplo se crea el usuario `news_aggregator` con la misma contraseña. A este nuevo usuario se le dan todos los permisos en la base de datos `NewsAggregatorBackend`.
 
+Si se necesita que el usuario tenga estos permisos sobre otras bases de datos (esto permitirá al usuario crear otras bases de datos):
+
+```sql
+GRANT ALL ON *.* TO 'news_aggregator'@'localhost';
+```
+
 ## Fechas, almacenamiento y tratamiento de distintas timezones. 
 
 Lo mejor es almacenar las fechas en formato UTC. Si es necesario hacer distinciones entre distintos usuarios (que se encuentren en zonas horarias distintas) se recomienda usar datetime en el backend y almacenar las timezones en formato IANA (estándar) en base de datos, en una columna independiente. De esta forma el backend podrá trabajar con las fechas y formatearlas con la timezone del cliente cuando sea necesario (normalmente para imprimirlo para humanos), pero siempre las guardará en UTC en base de datos.

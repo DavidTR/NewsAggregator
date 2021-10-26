@@ -66,6 +66,7 @@ Estas características serán incorporadas a todas las versiones:
 
 
 * Generador de documentación Swagger con Tornado.
+* Cacheo para API (envío de cabeceras).
 * Anotar todos los eventos del sistema en una nueva tabla de base de datos ("eventos"). Deberá evaluarse si puede hacerse con muy poco impacto al sistema y a la base de datos, anotando la información mínima indispensable. Se recomienda incluir el código como decorador o metaclase. 
 * Verificación de correo electrónico en alta de cuenta. Agregar soporte para reconocer usuarios activos o inactivos y usuarios con email verificado o no verificado. El proceso de alta se modificará para que fije al usuario como inactivo y con email no verificado (enviando un email para que active la cuenta a su vez), lo cual le impedirá hacer login hasta que lo verifique. Se deberá crear otra sección para reenviar el correo electrónico de activación desde el servicio de login. Estos correos deben tener un tiempo de expiración y su envío deberá anotarse en la base de datos, con fecha, usuario y resultado (tabla eventos).
 * Agregar una clasificación para cada feed RSS por popularidad (investigar si esta información existe). También se pueden usar otros criterios, como: 
