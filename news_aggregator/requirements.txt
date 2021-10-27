@@ -22,3 +22,5 @@ tornado==6.1
 typing-extensions==3.10.0.2
 uvloop==0.16.0
 yarl==1.6.3
+requests==2.26.0
+lxml==4.6.3

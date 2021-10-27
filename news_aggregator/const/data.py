@@ -2,7 +2,8 @@
 """
                                                   - File description -
 ------------------------------------------------------------------------------------------------------------------------
-Const values.
+Values that are not configuration settings but are better off centralized in a single file to be reused across the
+platform.
 
 """
 import logging

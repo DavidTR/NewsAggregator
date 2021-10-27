@@ -10,11 +10,14 @@ dynaconf_merge = true
 # =========================================================
 # == Configuration settings that are not tied to a table ==
 # =========================================================
-# Execution mode. This value should be overwritten by a environment variable, which has more priority than this toml
-# setting.
+# Execution mode. This value should be overwritten by a environment variable, which has more priority than this setting.
 # Set it as <envvar_prefix>_EXECUTION_MODE=<VALUE>, for example: NEWS_AGGR_EXECUTION_MODE=PRODUCTION
 # Supported values: "DEVELOPMENT", "PRODUCTION"
 execution_mode = "DEVELOPMENT"
+
+# Delay, in minutes, required to fetch the news from a RSS site. If a news reload is requested too soon, it will be
+# ignored.
+rss_cache_minutes = 30
 
 # ================================================
 # == Configuration settings organized in tables ==
