@@ -40,7 +40,7 @@ CREATE TABLE rss_feeds_news (
     id INT AUTO_INCREMENT,
     rss_feed_id INT NOT NULL,
     query_date DATETIME,
-    news_data MEDIUMTEXT,
+    news_data MEDIUMTEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     PRIMARY KEY(id),
     CONSTRAINT rss_feeds_news_rss_feeds_id_fk FOREIGN KEY(rss_feed_id) REFERENCES rss_feeds(id) ON DELETE CASCADE
 ) COMMENT = 'News obtained from the RSS sites stored in the "rss_feeds" table. Every row in this table will hold all the news received from a RSS feed in a given date. This information will be used as:

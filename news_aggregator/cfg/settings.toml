@@ -33,7 +33,8 @@ driver = "MySQL ODBC 8.0 Unicode Driver"
 server = "localhost"
 database = "NewsAggregatorBackend"
 
-# Only for ODBC connections.
+# Match the database encoding to avoid "misunderstandings" between the engine and the database.
+# Solved an encoding errors when storing RSS XML data.
 charset = "utf8mb4"
 
 # Background session expiration task.

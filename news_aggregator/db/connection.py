@@ -42,12 +42,14 @@ class DatabaseEngines(metaclass=SingletonMetaclass):
         self._sync_engine = create_engine(f'mysql://{database_connection_settings["uid"]}'
                                           f':{database_connection_settings["pwd"]}'
                                           f'@{database_connection_settings["server"]}'
-                                          f'/{database_connection_settings["database"]}')
+                                          f'/{database_connection_settings["database"]}?'
+                                          f'charset={database_connection_settings["charset"]}')
 
         self._async_engine = create_async_engine(f'mysql+aiomysql://{database_connection_settings["uid"]}'
                                                  f':{database_connection_settings["pwd"]}'
                                                  f'@{database_connection_settings["server"]}'
-                                                 f'/{database_connection_settings["database"]}')
+                                                 f'/{database_connection_settings["database"]}?'
+                                                 f'charset={database_connection_settings["charset"]}')
 
     def get_database_sync_engine(self):
         """Returns the database connection synchronous engine"""

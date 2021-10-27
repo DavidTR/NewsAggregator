@@ -4,6 +4,8 @@
 ------------------------------------------------------------------------------------------------------------------------
 
 """
+import re
+
 from cfg import config
 from const.data import EXECUTION_MODES
 
@@ -30,3 +32,20 @@ def get_session_expiration_delay() -> int:
         session_expiration_delay = 10
 
     return session_expiration_delay
+
+
+def decode_and_clean_xml_data(xml_data: bytes) -> str:
+    """Decode and clean an XML bytes sequence, returning it as an UTF-8 decoded string"""
+
+    # The response is decoded as an UTF-8 string to avoid encoding errors in the database and to be
+    # displayed correctly in the service's response. Clear special and unnecessary characters that would
+    # add to the XML's length.
+    clean_pattern = r"[\t\n]"
+    xml_utf_string = re.sub(clean_pattern, '', xml_data.decode('utf-8'))
+
+    # Also, substitute non-standard quotation marks (“”) for the standard ones (""), as they could be a source of
+    # encoding problems.
+    double_quotes_pattern = r"[“”]"
+    xml_utf_string = re.sub(double_quotes_pattern, '"', xml_utf_string)
+
+    return xml_utf_string
