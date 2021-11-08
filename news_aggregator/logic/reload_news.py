@@ -6,11 +6,11 @@
 """
 import concurrent.futures
 import datetime
-import time
 from threading import Thread
 from typing import Union
 
 import requests
+import xmltodict as xmltodict
 from lxml import etree
 from lxml.etree import XMLSyntaxError
 from sqlalchemy import update
@@ -26,7 +26,7 @@ from util.util import fast_list_flattener, decode_and_clean_xml_data
 from util.validators import is_integer_too_large, is_integer_too_small
 
 
-@requires_login
+# @requires_login
 class ReloadNews(BaseService):
 
     def __init__(self, *args, **kwargs):
@@ -101,6 +101,7 @@ class ReloadNews(BaseService):
             """
             rss_data["http_response"] = requests.get(rss_data["url"], timeout=timeout_in_seconds)
 
+        # TODO: Continuar.
         # TODO: Explicar y testear -> Añadir más sitios RSS y medir tiempos entre una alternativa y otra.
         results = []
 
@@ -184,7 +185,7 @@ class ReloadNews(BaseService):
         # Use asyncio and uvloop for a more efficient way to fetch and store the data.
         # TODO: Testear uvloop, agregar más RSS para poder comparar.
         # asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
-        start_time = time.time()
+        # start_time = time.time()
 
         # Fetch new data for those RSS sites that are outdated.
         # loop = asyncio.new_event_loop()
@@ -196,7 +197,7 @@ class ReloadNews(BaseService):
         # And retrieve database records from the database for those that are not.
         self._retrieve_rss_records_from_database()
 
-        print(time.time() - start_time)
+        # print(time.time() - start_time)
 
     def _post_execute(self) -> None:
 
@@ -254,16 +255,16 @@ class ReloadNews(BaseService):
 
         response = []
 
-        # Mix both dictionaries to build the response.
-        # This copy is not entirely necessary
+        # Mix both dictionaries to build the response. This copy may not be necessary, but it's more correct from a
+        # development point of view not to change a service data structure (_internal_data) to only build the response.
         all_updated_rss_data = self._internal_data["filtered_user_rss_feeds"]["url_fetch"]
         all_updated_rss_data.extend(self._internal_data["filtered_user_rss_feeds"]["from_cache"])
 
-        # Return the XML data retrieved from the RSS sites.
+        # Return the URL and the XML data retrieved from the RSS sites as a JSON object.
         for revised_user_rss_feed in all_updated_rss_data:
             fresh_rss_response = {
                 "url": revised_user_rss_feed["url"],
-                "data": revised_user_rss_feed["xml_string"]
+                "data": xmltodict.parse(revised_user_rss_feed["xml_string"])
             }
 
             response.append(fresh_rss_response)

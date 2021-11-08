@@ -1,3 +1,4 @@
+xmltodict
 aiohttp==3.7.4.post0
 aiomysql==0.0.21
 async-timeout==3.0.1
